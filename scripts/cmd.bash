@@ -4,3 +4,8 @@ if [ "$*" == "up" ] ; then
   git pull
   exit 0
 fi
+
+if [ "$*" == "hello" ] ; then
+  echo Hello $USER
+  exit 0
+fi
