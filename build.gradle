@@ -1,6 +1,7 @@
 def nowDate = new Date()
 def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
 def vendorName = "greetgo!"
+def ggRepo = System.getenv('GG_REPO')
 
 allprojects {
   apply plugin: 'java'
@@ -20,7 +21,8 @@ subprojects {
 
   repositories {
     mavenLocal()
-    mavenCentral()
+    if (ggRepo?.trim()) maven { url ggRepo.trim() }
+    jcenter()
   }
 
   dependencies {
@@ -28,7 +30,7 @@ subprojects {
     ext.depinjectVersion = '2.0.0'
     ext.greetgoDbVersion = '2.0.0'
     ext.greetgoConfVersion = '0.1.5'
-    ext.greetgoMvcVersion = "2.0.7"
+    ext.greetgoUtilVersion = "2.0.0"
     ext.jettyVersion = '9.4.0.v20161208'
     ext.guavaVersion = '23.0'
 
@@ -40,7 +42,7 @@ subprojects {
   jar {
     manifest {
       attributes 'Implementation-Title': project.name, 'Implementation-Version': version,
-          'Implementation-Vendor': vendorName, 'Built-By': System.getProperty("user.name"), 'Built-At': nowFormattedDate
+        'Implementation-Vendor': vendorName, 'Built-By': System.getProperty("user.name"), 'Built-At': nowFormattedDate
     }
   }
 
