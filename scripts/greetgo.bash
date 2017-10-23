@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-REPO_URL=/home/pompei/IdeaProjects/greetgo.cmd
+REPO_URL=$HOME/IdeaProjects/greetgo.cmd
+if ! [ -d $REPO_URL ] ; then
+  REPO_URL=https://github.com/greetgo/greetgo.cmd.git
+fi
 P_NAME=greetgo.cmd
 
 if ! which git > /dev/null ; then

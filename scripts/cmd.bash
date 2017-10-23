@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
-echo Hello World
-echo CWD = ${CWD}
-echo ARGUMENTS: $*
+if [ "$*" == "up" ] ; then
+  git pull
+  exit 0
+fi
