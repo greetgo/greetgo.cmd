@@ -3,18 +3,32 @@ def nowFormattedDate = nowDate.format("yyyy-MM-dd/HH:mm:ss")
 def vendorName = "greetgo!"
 def ggRepo = System.getenv('GG_REPO')
 
+buildscript {
+  repositories {
+    jcenter()
+  }
+
+  dependencies {
+    classpath 'org.ajoberstar:grgit:1.1.0'
+  }
+}
+
 allprojects {
   apply plugin: 'java'
   apply plugin: 'maven'
   apply plugin: 'idea'
 
-  version = '0.0.1'
+  version = rootProject.file('version.txt').text.trim()
 
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
 
   group = "kz.greetgo.cmd"
 
+  ext {
+    git = org.ajoberstar.grgit.Grgit.open(project.rootDir)
+    revision = git.head().id
+  }
 }
 
 subprojects {
@@ -41,8 +55,14 @@ subprojects {
 
   jar {
     manifest {
-      attributes 'Implementation-Title': project.name, 'Implementation-Version': version,
-        'Implementation-Vendor': vendorName, 'Built-By': System.getProperty("user.name"), 'Built-At': nowFormattedDate
+      attributes(
+        'Implementation-Title': project.name,
+        'Implementation-Version': version,
+        'Implementation-Vendor': vendorName,
+        'Built-By': System.getProperty("user.name"),
+        'Built-At': nowFormattedDate,
+        'Specification-Version': revision,
+      )
     }
   }
 

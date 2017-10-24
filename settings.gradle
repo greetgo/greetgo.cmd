@@ -1,4 +1,4 @@
 include 'greetgo.cmd.probes'
 include 'greetgo.cmd.client'
 include 'greetgo.cmd.server'
-include 'greetgo.cmd.share'
+include 'greetgo.cmd.core'

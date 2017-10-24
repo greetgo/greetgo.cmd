@@ -1,4 +1,4 @@
-package kz.greetgo.cmd.share.config;
+package kz.greetgo.cmd.core.config;
 
 import kz.greetgo.depinject.core.BeanConfig;
 import kz.greetgo.depinject.core.BeanScanner;

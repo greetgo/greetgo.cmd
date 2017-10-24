@@ -1,5 +1,5 @@
 dependencies {
-  //compile project(':greetgo.cmd.share')
+  //compile project(':greetgo.cmd.core')
 
   compile "kz.greetgo.depinject:greetgo.depinject:$depinjectVersion"
   compile "kz.greetgo:greetgo.conf:$greetgoConfVersion"

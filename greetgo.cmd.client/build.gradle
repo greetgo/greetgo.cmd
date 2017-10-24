@@ -1,3 +1,12 @@
 dependencies {
-  compile project(':greetgo.cmd.share')
+  compile project(':greetgo.cmd.core')
+}
+
+jar {
+  manifest {
+    attributes(
+      "Class-Path": configurations.compile.collect { it.toString() }.join(' '),
+      'Main-Class': 'kz.greetgo.cmd.client.launcher.MainProbe'
+    )
+  }
 }

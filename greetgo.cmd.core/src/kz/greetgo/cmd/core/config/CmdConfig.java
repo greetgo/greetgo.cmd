@@ -1,4 +1,4 @@
-package kz.greetgo.cmd.share.config;
+package kz.greetgo.cmd.core.config;
 
 import kz.greetgo.conf.hot.DefaultIntValue;
 import kz.greetgo.conf.hot.Description;
