@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
+export CURRENT_WORKING_DIR=$PWD
+
 if [ -f $HOME/IdeaProjects/greetgo.cmd/scripts/cmd.bash ] ; then
-  export CWD=$PWD
   cd $HOME/IdeaProjects/greetgo.cmd/scripts
   bash cmd.bash $*
   exit $?

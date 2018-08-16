@@ -7,8 +7,11 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.*;
 
 public class SimpleServer {
   public static void main(String[] args) throws Exception {
@@ -16,6 +19,7 @@ public class SimpleServer {
 
       System.nanoTime();
 
+      //noinspection InfiniteLoopStatement
       while (true) {
 
         System.out.println("Reading...");
@@ -24,7 +28,7 @@ public class SimpleServer {
 
           InputStream inputStream = socket.getInputStream();
 
-          InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
+          InputStreamReader reader = new InputStreamReader(inputStream, UTF_8);
 
           BufferedReader br = new BufferedReader(reader);
 
@@ -40,7 +44,7 @@ public class SimpleServer {
 
           OutputStream outputStream = socket.getOutputStream();
           for (String line : lines) {
-            outputStream.write(("Hello " + line + "\n").getBytes("UTF-8"));
+            outputStream.write(("Hello " + line + "\n").getBytes(UTF_8));
           }
           outputStream.close();
 

@@ -1,3 +1,5 @@
+rootProject.name = 'greetgo.cmd'
+
 include 'greetgo.cmd.probes'
 include 'greetgo.cmd.client'
 include 'greetgo.cmd.server'
