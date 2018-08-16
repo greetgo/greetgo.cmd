@@ -17,8 +17,19 @@ if ! which gradle > /dev/null ; then
   exit 1
 fi
 
-if [ "$*" == "hello" ] ; then
+GRADLE=$(realpath ..)/gradlew
+
+if ! which java > /dev/null ; then
+  echo java does not installed >&2
+  echo Please install java 1.8+ >&2
+  exit 1
+fi
+
+if [ "$*" == "status" ] ; then
   echo Hello $USER
+  echo CURRENT_WORKING_DIR = $CURRENT_WORKING_DIR
+  echo GRADLE = $GRADLE
+
   exit 0
 fi
 
@@ -30,7 +41,7 @@ ROOT_DIR=$PWD
 
 if ! [ -f $CLIENT_JAR ] ; then
   cd greetgo.cmd.client
-  gradle jar
+  $GRADLE jar
   cd $ROOT_DIR
   if ! [ -f $CLIENT_JAR ] ; then
     echo "Cannot build $CLIENT_JAR" >&2
@@ -39,11 +50,5 @@ if ! [ -f $CLIENT_JAR ] ; then
 fi
 
 cd $ROOT_DIR
-
-if ! which java > /dev/null ; then
-  echo java does not installed >&2
-  echo Please install java 1.8+ >&2
-  exit 1
-fi
 
 java -jar $CLIENT_JAR $*

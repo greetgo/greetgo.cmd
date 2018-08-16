@@ -12,8 +12,8 @@ public class MainProbe {
 
   private void execute(String[] args) {
     System.out.println("Hello from CMD Client");
-    System.out.println("CWD = " + System.getenv("CWD"));
-    System.out.println("ARGS: " + Arrays.stream(args).collect(Collectors.joining(" - ")));
+    System.out.println("CURRENT_WORKING_DIR = " + System.getenv("CURRENT_WORKING_DIR"));
+    System.out.println("ARGS: " + String.join(" - ", args));
     System.out.println(AsdCore.asd("Hi"));
     String implementationVersion = getClass().getPackage().getImplementationVersion();
     System.out.println("implementationVersion = " + implementationVersion);

@@ -18,8 +18,6 @@ if ! which git > /dev/null ; then
   exit 1
 fi
 
-export CWD=$PWD
-
 REPO_DIR=$HOME/.local/greetgo/repo
 
 if [ ! -d $REPO_DIR/greetgo.cmd ] ; then
