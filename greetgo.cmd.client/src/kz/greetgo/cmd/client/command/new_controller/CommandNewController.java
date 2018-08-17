@@ -8,12 +8,16 @@ public class CommandNewController {
 
   public Supplier<Integer> usage = null;
 
-  public int exec(List<String> argList, PrintStream out, PrintStream err) {
+  public int exec(List<String> argList) {
     if (argList.size() == 0) {
-      err.println("Not specified controller name. Usage:");
+      System.err.println("Not specified controller name. Usage:");
+      System.err.println();
       return usage.get();
     }
-    System.out.println("Creating controller " + argList.get(0));
+
+    String controllerName = argList.get(0);
+
+    System.out.println("Creating controller " + controllerName);
     return 1;
   }
 }

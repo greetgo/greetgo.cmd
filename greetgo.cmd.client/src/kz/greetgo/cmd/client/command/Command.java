@@ -8,5 +8,5 @@ public interface Command {
 
   void printShortHelpTo(PrintStream out);
 
-  int exec(List<String> argList, PrintStream out, PrintStream err);
+  int exec(List<String> argList);
 }

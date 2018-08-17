@@ -2,7 +2,6 @@ package kz.greetgo.cmd.client.launcher;
 
 import kz.greetgo.cmd.client.command.CmdBuilder;
 import kz.greetgo.cmd.client.command.Command;
-import kz.greetgo.cmd.core.AsdCore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +28,7 @@ public class Launcher {
 
     for (Command command : cmdBuilder.allCommands()) {
       if (command.name().equals(commandName)) {
-        return command.exec(argList, System.out, System.err);
+        return command.exec(argList);
       }
     }
 
@@ -41,6 +40,7 @@ public class Launcher {
 
   private int usage(String cmd, CmdBuilder cmdBuilder) {
     System.err.println("Usage: " + cmd + " <command>");
+    System.err.println();
     for (Command command : cmdBuilder.allCommands()) {
       command.printShortHelpTo(System.err);
       System.err.println();

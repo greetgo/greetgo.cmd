@@ -14,18 +14,18 @@ public class CommandVersion extends CommandAbstract {
   }
 
   @Override
-  public int exec(List<String> argList, PrintStream out, PrintStream err) {
+  public int exec(List<String> argList) {
     if (argList.size() == 0) {
       String specificationVersion = getClass().getPackage().getSpecificationVersion();
-      out.println("version = " + specificationVersion);
+      System.out.println("version = " + specificationVersion);
       String implementationVersion = getClass().getPackage().getImplementationVersion();
-      out.println("git = " + implementationVersion);
-      out.println("USED_COMMAND = " + System.getenv("USED_COMMAND"));
-      out.println("CURRENT_WORKING_DIR = " + System.getenv("CURRENT_WORKING_DIR"));
+      System.out.println("git = " + implementationVersion);
+      System.out.println("USED_COMMAND = " + System.getenv("USED_COMMAND"));
+      System.out.println("CURRENT_WORKING_DIR = " + System.getenv("CURRENT_WORKING_DIR"));
       return 0;
     }
 
-    err.println("While parameters not works");
+    System.err.println("While parameters not works");
     return 1;
   }
 }
