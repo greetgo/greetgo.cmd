@@ -1,20 +1,50 @@
 package kz.greetgo.cmd.client.launcher;
 
+import kz.greetgo.cmd.client.command.CmdBuilder;
+import kz.greetgo.cmd.client.command.Command;
 import kz.greetgo.cmd.core.AsdCore;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Launcher {
   public static void main(String[] args) {
-    new Launcher().exec(args);
+    System.exit(new Launcher().exec(args));
   }
 
-  private void exec(String[] args) {
-    System.out.println("Hello from CMD Client");
-    System.out.println("CURRENT_WORKING_DIR = " + System.getenv("CURRENT_WORKING_DIR"));
-    System.out.println("ARGS: " + String.join(" - ", args));
-    System.out.println(AsdCore.asd("Hi"));
-    String implementationVersion = getClass().getPackage().getImplementationVersion();
-    System.out.println("implementationVersion = " + implementationVersion);
-    String specificationVersion = getClass().getPackage().getSpecificationVersion();
-    System.out.println("specificationVersion = " + specificationVersion);
+  private int exec(String[] args) {
+
+
+    String cmd = System.getenv("USED_COMMAND");
+    CmdBuilder cmdBuilder = CmdBuilder.newCmdBuilder()
+      .setUsedCommand(cmd);
+
+    if (args.length == 0) {
+      return usage(cmd, cmdBuilder);
+    }
+
+    String commandName = args[0];
+    List<String> argList = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
+
+    for (Command command : cmdBuilder.allCommands()) {
+      if (command.name().equals(commandName)) {
+        return command.exec(argList, System.out, System.err);
+      }
+    }
+
+    System.err.println("Unknown command " + commandName);
+    System.err.println();
+
+    return usage(cmd, cmdBuilder);
+  }
+
+  private int usage(String cmd, CmdBuilder cmdBuilder) {
+    System.err.println("Usage: " + cmd + " <command>");
+    for (Command command : cmdBuilder.allCommands()) {
+      command.printShortHelpTo(System.err);
+      System.err.println();
+    }
+    return 1;
   }
 }

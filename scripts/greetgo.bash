@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
+export USED_COMMAND=$(basename $0)
+
 export CURRENT_WORKING_DIR=$PWD
 
 if [ -f $HOME/IdeaProjects/greetgo.cmd/scripts/cmd.bash ] ; then
   cd $HOME/IdeaProjects/greetgo.cmd/scripts
+  export GREETGO_DEBUG=1
   bash cmd.bash $*
   exit $?
 fi

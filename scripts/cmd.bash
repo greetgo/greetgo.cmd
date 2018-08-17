@@ -26,7 +26,7 @@ if ! which java > /dev/null ; then
 fi
 
 if [ "$*" == "status" ] ; then
-  echo Hello $USER
+  echo User $USER
   echo CURRENT_WORKING_DIR = $CURRENT_WORKING_DIR
   echo GRADLE = $GRADLE
 
@@ -39,7 +39,7 @@ cd ..
 
 ROOT_DIR=$PWD
 
-if ! [ -f $CLIENT_JAR ] ; then
+if [ ! -f $CLIENT_JAR -o -n "$GREETGO_DEBUG" ] ; then
   cd greetgo.cmd.client
   $GRADLE jar
   cd $ROOT_DIR
