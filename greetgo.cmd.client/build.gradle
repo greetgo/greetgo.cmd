@@ -4,9 +4,7 @@ dependencies {
 
 jar {
   manifest {
-    attributes(
-      "Class-Path": configurations.compile.collect { it.toString() }.join(' '),
-      'Main-Class': 'kz.greetgo.cmd.client.launcher.MainProbe'
-    )
+    attributes 'Class-Path': configurations.compile.collect { it.toString() }.join(' ')
+    attributes 'Main-Class': 'kz.greetgo.cmd.client.launcher.Launcher'
   }
 }
