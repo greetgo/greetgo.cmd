@@ -39,8 +39,7 @@ public class CommandNewControllerApplier {
   private final List<ClassRef> mybatisTestDaoDbRefList = new ArrayList<>();
 
 
-  public int execute() {
-
+  public void execute() {
     controllerRef = project.getControllerPackageRef().createClassRef(name + "Controller");
     registerRef = project.getRegisterInterfacePackageRef().createClassRef(name + "Register");
     registerImplRef = project.getRegisterImplPackageRef().createClassRef(name + "RegisterImpl");
@@ -68,7 +67,6 @@ public class CommandNewControllerApplier {
     mybatisTestDaoRef.save();
     mybatisTestDaoDbRefList.forEach(ClassRef::save);
 
-    return 0;
   }
 
   private void initDaoList(List<ClassRef> daoList, ClassRef topRef, String suffix) {

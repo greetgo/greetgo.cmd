@@ -22,13 +22,8 @@ public class ProjectParams {
 
   public static final String MYBATIS_TEST_DAO_PACKAGE_TXT = "mybatis-test-dao-package.txt";
 
-  public static String readValue(Path pathToFile) {
-    String value = readValueOrNull(pathToFile);
-    return value == null ? "" : value;
-  }
-
-  public static String readValueOrNull(Path pathToFile) {
-    if (!pathToFile.toFile().exists()) return null;
+  public static ReadResult<String> readValue(Path pathToFile) {
+    if (!pathToFile.toFile().exists()) return ReadResult.ofFileAbsent();
     try {
       List<String> stringList = Files.readAllLines(pathToFile);
 
@@ -36,18 +31,17 @@ public class ProjectParams {
         String trimmedLine = line.trim();
         if (trimmedLine.length() == 0) continue;
         if (trimmedLine.startsWith("#")) continue;
-        return trimmedLine;
+        return ReadResult.of(trimmedLine);
       }
 
-      return null;
+      return ReadResult.ofValueAbsent();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-
   }
 
-  public static List<String> readLines(Path pathToFile) {
-    if (!pathToFile.toFile().exists()) return null;
+  public static ReadResult<List<String>> readLines(Path pathToFile) {
+    if (!pathToFile.toFile().exists()) return ReadResult.ofFileAbsent();
     try {
       List<String> stringList = Files.readAllLines(pathToFile);
       List<String> ret = new ArrayList<>();
@@ -59,7 +53,7 @@ public class ProjectParams {
         ret.add(trimmedLine);
       }
 
-      return ret;
+      return ReadResult.of(ret);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

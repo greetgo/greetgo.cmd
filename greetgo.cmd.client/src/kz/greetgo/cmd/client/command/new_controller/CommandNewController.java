@@ -19,10 +19,17 @@ public class CommandNewController {
 
     String name = argList.get(0);
 
-    Project project = Project.openProject(PathUtil.findRoot());
 
-    CommandNewControllerApplier a = new CommandNewControllerApplier(project, name);
+    try {
+      Project project = Project.openProject(PathUtil.findRoot());
 
-    return a.execute();
+      CommandNewControllerApplier a = new CommandNewControllerApplier(project, name);
+
+      a.execute();
+      return 0;
+    } catch (RuntimeException e) {
+      e.printStackTrace();
+      return 100;
+    }
   }
 }
