@@ -1,7 +1,12 @@
 dependencies {
   compile project(':greetgo.cmd.core')
 
+  compile "kz.greetgo.mvc:greetgo.mvc:$greetgoMvcVersion"
+  compile "kz.greetgo.depinject:greetgo.depinject:$depinjectVersion"
+  compile "kz.greetgo:greetgo.security:$greetgoSecurityVersion"
+
   testCompile "kz.greetgo:greetgo.util:$greetgoUtilVersion"
+
 }
 
 jar {

@@ -14,6 +14,6 @@ public class PackageRef {
   }
 
   public ClassRef createClassRef(String controllerName) {
-    return null;
+    return new ClassRef(root.resolve(sourcePath), packagePath, controllerName);
   }
 }

@@ -1,5 +1,7 @@
-package kz.greetgo.cmd.core.project;
+package kz.greetgo.cmd.client.command.new_controller;
 
+import kz.greetgo.cmd.client.test_data.TestControllerMarker;
+import kz.greetgo.cmd.core.project.Project;
 import kz.greetgo.util.RND;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -11,12 +13,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static kz.greetgo.cmd.core.util.PathUtil.CONTROLLER_PACKAGE_TXT;
-import static kz.greetgo.cmd.core.util.PathUtil.DOT_GREETGO;
-import static kz.greetgo.cmd.core.util.PathUtil.PROJECT_NAME_TXT;
-import static org.fest.assertions.api.Assertions.assertThat;
+import static kz.greetgo.cmd.core.util.PathUtil.*;
 
-public class ProjectTest {
+public class CommandNewControllerApplierTest {
 
   Path rootProjectDir;
   String projectName;
@@ -29,12 +28,13 @@ public class ProjectTest {
 
     rootProjectDir = Paths.get("build")
       .resolve("tests_data")
-      .resolve("ProjectTest")
+      .resolve(CommandNewControllerApplierTest.class.getSimpleName())
       .resolve("project-" + sdf.format(new Date()) + "-" + RND.intStr(4));
-
 
     projectParam(PROJECT_NAME_TXT, projectName);
     projectParam(CONTROLLER_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller");
+    projectParam(REGISTER_INTERFACE_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/register");
+    projectParam(CONTROLLER_MARKER_INTERFACE_TXT, TestControllerMarker.class.getName());
   }
 
   private void projectParam(String fileName, String value) throws Exception {
@@ -44,39 +44,11 @@ public class ProjectTest {
   }
 
   @Test
-  public void getName() {
+  public void testName() {
     Project project = Project.openProject(rootProjectDir);
 
-    //
-    //
-    String projectName = project.getName();
-    //
-    //
+    CommandNewControllerApplier a = new CommandNewControllerApplier(project, "Test");
 
-    assertThat(projectName).isEqualTo(this.projectName);
-  }
-
-  @Test
-  public void getControllerPackageRef() {
-    Project project = Project.openProject(rootProjectDir);
-
-    //
-    //
-    String projectName = project.getName();
-    //
-    //
-
-    assertThat(projectName).isEqualTo(this.projectName);
-  }
-
-  @Test
-  public void printController() {
-    Project project = Project.openProject(rootProjectDir);
-
-    PackageRef controllerPackageRef = project.getControllerPackageRef();
-
-    ClassRef controllerRef = controllerPackageRef.createClassRef("AsdController");
-
-    controllerRef.save();
+    a.execute();
   }
 }

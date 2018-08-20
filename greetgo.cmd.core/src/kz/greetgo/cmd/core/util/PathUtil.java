@@ -13,7 +13,9 @@ public class PathUtil {
 
   public static final String DOT_GREETGO = ".greetgo";
   public static final String PROJECT_NAME_TXT = "project-name.txt";
+  public static final String CONTROLLER_MARKER_INTERFACE_TXT = "controller-marker-interface.txt";
   public static final String CONTROLLER_PACKAGE_TXT = "controller-package.txt";
+  public static final String REGISTER_INTERFACE_PACKAGE_TXT = "register-interface-package.txt";
 
   public static Path findRoot() {
     return findDirWithFile(DOT_GREETGO, currentWorkingDir());
@@ -24,7 +26,6 @@ public class PathUtil {
     File current = sourceDir.toFile();
 
     while (true) {
-
       if (current.toPath().resolve(simpleFileName).toFile().exists()) {
         return current.toPath().toAbsolutePath();
       }
@@ -32,7 +33,16 @@ public class PathUtil {
       current = current.getParentFile();
 
       if (current == null) throw new CannotFindDirWithFile(simpleFileName, sourceDir);
-
     }
+  }
+
+  public static String toPoints(String packagePath) {
+    while (packagePath.startsWith("/")
+      || packagePath.startsWith("\\")
+      || packagePath.startsWith(".")
+    ) {
+      packagePath = packagePath.substring(1);
+    }
+    return packagePath.replace('/', '.').replace('\\', '.');
   }
 }

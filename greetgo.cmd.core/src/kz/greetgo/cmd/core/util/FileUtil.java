@@ -7,7 +7,12 @@ import java.util.List;
 
 public class FileUtil {
   public static String readParamFile(Path pathToFile) {
-    if (!pathToFile.toFile().exists()) return "";
+    String value = readParamFileNull(pathToFile);
+    return value == null ? "" : value;
+  }
+
+  public static String readParamFileNull(Path pathToFile) {
+    if (!pathToFile.toFile().exists()) return null;
     try {
       List<String> stringList = Files.readAllLines(pathToFile);
 
@@ -18,7 +23,7 @@ public class FileUtil {
         return trimmedLine;
       }
 
-      return "";
+      return null;
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

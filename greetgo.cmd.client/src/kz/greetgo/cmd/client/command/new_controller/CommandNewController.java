@@ -1,6 +1,5 @@
 package kz.greetgo.cmd.client.command.new_controller;
 
-import kz.greetgo.cmd.core.project.PackageRef;
 import kz.greetgo.cmd.core.project.Project;
 import kz.greetgo.cmd.core.util.PathUtil;
 
@@ -18,16 +17,12 @@ public class CommandNewController {
       return usage.get();
     }
 
-    String controllerName = argList.get(0);
+    String name = argList.get(0);
 
     Project project = Project.openProject(PathUtil.findRoot());
 
-    PackageRef controllerPackageRef = project.getControllerPackageRef();
+    CommandNewControllerApplier a = new CommandNewControllerApplier(project, name);
 
-    controllerPackageRef.createClassRef(controllerName);
-
-    System.out.println("Creating controller " + controllerName);
-
-    return 0;
+    return a.execute();
   }
 }
