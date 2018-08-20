@@ -34,12 +34,13 @@ subprojects {
     ext.greetgoUtilVersion = "2.0.0"
     ext.greetgoMvcVersion = "3.0.0"
     ext.greetgoSecurityVersion = "0.0.1"
+    ext.testNgVersion = "6.5.1"
 
     ext.jettyVersion = '9.4.0.v20161208'
     ext.guavaVersion = '23.0'
 
 
-    testCompile 'org.testng:testng:6.5.1'
+    testCompile "org.testng:testng:$testNgVersion"
     compile 'org.easytesting:fest-assert-core:2.0M10'
 
   }

@@ -23,10 +23,7 @@ public class CmdBuilder {
     return this;
   }
 
-  public List<Command> allCommands() {
-    List<Command> ret = new ArrayList<>();
-    ret.add(new CommandVersion());
-    ret.add(new CommandNew());
-    return ret;
+  public List<? extends Command> allCommands() {
+    return commandList;
   }
 }

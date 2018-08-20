@@ -33,10 +33,14 @@ public class CommandNew extends CommandAbstract {
   private int usage() {
     System.err.println("Usage:");
     System.err.println();
-    System.err.println("  " + usedCommand + " " + name() + " controller <controller_name>");
+    System.err.println("  " + usedCommand + " " + name() + " controller <Name>");
     System.err.println("  or");
-    System.err.println("  " + usedCommand + " " + name() + " c <controller_name>");
-    System.err.println("      Creates new controller with name <controller_name>");
+    System.err.println("  " + usedCommand + " " + name() + " c <Name>");
+    System.err.println("      ");
+    System.err.println("      Creates new controller with name <Name>Controller");
+    System.err.println("      ");
+    System.err.println("      Note <Name> MUST starts with BIG letter");
+    System.err.println("      Note <Name> MUST NOT contains 'Controller' at the end");
     System.err.println();
     return 1;
   }

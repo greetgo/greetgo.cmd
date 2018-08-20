@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -59,8 +60,19 @@ public class ClassRef {
 
     ret.append("package ").append(toPoints(inPackage.packagePath)).append(";\n");
     ret.append("\n");
-    imports.content().forEach(line -> ret.append(line).append("\n"));
-    ret.append("\n");
+
+    if (imports.content().size() > 0) {
+      imports.content().forEach(line -> ret.append(line).append("\n"));
+      ret.append("\n");
+    }
+
+    if (staticImportList.size() > 0) {
+      staticImportList.sort(Comparator.comparing(s -> s));
+      for (String st : staticImportList) {
+        ret.append("import static ").append(st).append(";\n");
+      }
+      ret.append("\n");
+    }
 
     ret.append(beforeClass.text());
     ret.append("public ").append(type.name().toLowerCase()).append(" ").append(name);
@@ -88,4 +100,9 @@ public class ClassRef {
     }
   }
 
+  private final List<String> staticImportList = new ArrayList<>();
+
+  public void importStatic(String staticImport) {
+    staticImportList.add(staticImport);
+  }
 }

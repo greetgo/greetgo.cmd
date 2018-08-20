@@ -13,8 +13,6 @@ public class Launcher {
   }
 
   private int exec(String[] args) {
-
-
     String cmd = System.getenv("USED_COMMAND");
     CmdBuilder cmdBuilder = CmdBuilder.newCmdBuilder()
       .setUsedCommand(cmd);

@@ -11,9 +11,13 @@ import kz.greetgo.mvc.annotations.on_methods.ControllerPrefix;
 import kz.greetgo.mvc.annotations.on_methods.OnGet;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static kz.greetgo.cmd.client.util.StrUtil.firstLower;
+import static kz.greetgo.cmd.client.util.StrUtil.toUnderscore;
 
 public class CommandNewControllerApplier {
   private final Project project;
@@ -25,41 +29,60 @@ public class CommandNewControllerApplier {
   }
 
   private ClassRef controllerRef;
-  private ClassRef registerInterfaceRef;
+  private ClassRef registerRef;
   private ClassRef registerImplRef;
   private ClassRef mybatisDaoRef;
   private final List<ClassRef> mybatisDaoDbRefList = new ArrayList<>();
+  private ClassRef registerTestRef;
+
+  private ClassRef mybatisTestDaoRef;
+  private final List<ClassRef> mybatisTestDaoDbRefList = new ArrayList<>();
+
 
   public int execute() {
 
     controllerRef = project.getControllerPackageRef().createClassRef(name + "Controller");
-    registerInterfaceRef = project.getRegisterInterfacePackageRef().createClassRef(name + "Register");
+    registerRef = project.getRegisterInterfacePackageRef().createClassRef(name + "Register");
     registerImplRef = project.getRegisterImplPackageRef().createClassRef(name + "RegisterImpl");
     mybatisDaoRef = project.getMybatisDaoPackageRef().createClassRef(name + "Dao");
-    for (String database : project.getMybatisDaoDatabases()) {
-      mybatisDaoDbRefList.add(mybatisDaoRef.inPackage
-        .subPackage(database.toLowerCase())
-        .createClassRef(name + "Dao" + database)
-      );
-    }
+    mybatisTestDaoRef = project.getMybatisTestDaoPackageRef().createClassRef(name + "TestDao");
+
+    initDaoList(mybatisDaoDbRefList, mybatisDaoRef, "Dao");
+    initDaoList(mybatisTestDaoDbRefList, mybatisTestDaoRef, "TestDao");
+
+    registerTestRef = project.getRegisterImplTestPackageRef().createClassRef(name + "RegisterImplTest");
 
     generateController();
     generateRegisterInterface();
     generateRegisterImpl();
     generateDao();
+    generateTestDao();
+    generateRegisterImplTest();
 
     controllerRef.save();
-    registerInterfaceRef.save();
+    registerRef.save();
     registerImplRef.save();
     mybatisDaoRef.save();
     mybatisDaoDbRefList.forEach(ClassRef::save);
+    registerTestRef.save();
+    mybatisTestDaoRef.save();
+    mybatisTestDaoDbRefList.forEach(ClassRef::save);
 
     return 0;
   }
 
+  private void initDaoList(List<ClassRef> daoList, ClassRef topRef, String suffix) {
+    for (String database : project.getMybatisDaoDatabases()) {
+      daoList.add(
+        topRef.inPackage.subPackage(database.toLowerCase())
+          .createClassRef(name + suffix + database)
+      );
+    }
+  }
+
   private void generateController() {
     controllerRef.beforeClass.pr("@").cl(Bean.class).prn();
-    controllerRef.beforeClass.pr("@").cl(ControllerPrefix.class).prn("(\"/" + name.toLowerCase() + "\")");
+    controllerRef.beforeClass.pr("@").cl(ControllerPrefix.class).prn("(\"/" + toUnderscore(name) + "\")");
 
     {
       String controllerMarkerInterface = project.getControllerMarkerInterface();
@@ -68,11 +91,11 @@ public class CommandNewControllerApplier {
       }
     }
 
-    String registerVar = name.toLowerCase() + "Register";
+    String registerVar = firstLower(name) + "Register";
 
     controllerRef.content.prn(1);
     controllerRef.content.pr(1, "public ").cl(BeanGetter.class)
-      .pr("<").cl(registerInterfaceRef.fullName()).pr("> ")
+      .pr("<").cl(registerRef.fullName()).pr("> ")
       .pr(registerVar).prn(";")
     ;
 
@@ -88,10 +111,10 @@ public class CommandNewControllerApplier {
   }
 
   private void generateRegisterInterface() {
-    registerInterfaceRef.type = ClassType.INTERFACE;
-    registerInterfaceRef.content.prn(1);
-    registerInterfaceRef.content.pr(1, "String getById(String id);").prn();
-    registerInterfaceRef.content.prn(1);
+    registerRef.type = ClassType.INTERFACE;
+    registerRef.content.prn(1);
+    registerRef.content.pr(1, "String getById(String id);").prn();
+    registerRef.content.prn(1);
   }
 
   private void generateRegisterImpl() {
@@ -99,7 +122,7 @@ public class CommandNewControllerApplier {
 
     registerImplRef.content.prn(1);
 
-    String daoVar = name.toLowerCase() + "Dao";
+    String daoVar = firstLower(name) + "Dao";
 
     registerImplRef.content
       .pr(1, "public ").cl(BeanGetter.class).pr("<").cl(mybatisDaoRef.fullName()).prn("> " + daoVar + ";");
@@ -113,7 +136,7 @@ public class CommandNewControllerApplier {
 
     registerImplRef.content.prn(1);
 
-    registerImplRef.implement(registerInterfaceRef.fullName());
+    registerImplRef.implement(registerRef.fullName());
   }
 
   private void generateDao() {
@@ -131,5 +154,59 @@ public class CommandNewControllerApplier {
       ref.setParent(mybatisDaoRef.fullName());
       ref.type = ClassType.INTERFACE;
     }
+  }
+
+  private void generateTestDao() {
+    mybatisTestDaoRef.type = ClassType.INTERFACE;
+
+    for (ClassRef ref : mybatisTestDaoDbRefList) {
+      ref.beforeClass.pr("@").cl(Bean.class).prn();
+      ref.setParent(mybatisTestDaoRef.fullName());
+      ref.type = ClassType.INTERFACE;
+    }
+  }
+
+  private void generateRegisterImplTest() {
+
+    for (String beforeClass : project.getRegisterImplTestBeforeClass()) {
+      registerTestRef.beforeClass.pri(beforeClass).prn();
+    }
+
+    String extendsClass = project.getRegisterImplTestExtends();
+    if (extendsClass != null) {
+      registerTestRef.setParent(extendsClass);
+    }
+
+    registerTestRef.content.prn();
+
+    registerTestRef.content.prn();
+
+    String registerVar = firstLower(name) + "Register";
+
+    registerTestRef.content
+      .pr(1, "public ").cl(BeanGetter.class).pr("<").cl(registerRef.fullName()).prn("> " + registerVar + ";");
+
+    registerTestRef.content.prn();
+
+    String daoVar = firstLower(name) + "TestDao";
+
+    registerTestRef.content
+      .pr(1, "public ").cl(BeanGetter.class).pr("<").cl(mybatisTestDaoRef.fullName()).prn("> " + daoVar + ";");
+
+    registerTestRef.content.prn();
+
+    registerTestRef.importStatic("org.fest.assertions.api.Assertions.assertThat");
+
+    registerTestRef.content.pr(1, "@").cl(Test.class).prn();
+    registerTestRef.content.prn(1, "public void test() {");
+    registerTestRef.content.prn(2);
+    registerTestRef.content.prn(2, "assertThat(" + registerVar + ").isNotNull();");
+    registerTestRef.content.prn(2);
+    registerTestRef.content.prn(2, "assertThat(" + daoVar + ").isNotNull();");
+    registerTestRef.content.prn(2);
+    registerTestRef.content.prn(1, "}");
+
+    registerTestRef.content.prn();
+
   }
 }

@@ -55,4 +55,20 @@ public class Project {
   public List<String> getMybatisDaoDatabases() {
     return ProjectParams.readLines(paramFile(MYBATIS_DAO_DATABASES_TXT));
   }
+
+  public PackageRef getRegisterImplTestPackageRef() {
+    return getPackageRef(REGISTER_IMPL_TEST_PACKAGE_TXT);
+  }
+
+  public List<String> getRegisterImplTestBeforeClass() {
+    return ProjectParams.readLines(paramFile(REGISTER_IMPL_TEST_BEFORE_CLASS_TXT));
+  }
+
+  public String getRegisterImplTestExtends() {
+    return readValueOrNull(paramFile(REGISTER_IMPL_TEST_EXTENDS_TXT));
+  }
+
+  public PackageRef getMybatisTestDaoPackageRef() {
+    return getPackageRef(MYBATIS_TEST_DAO_PACKAGE_TXT);
+  }
 }

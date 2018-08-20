@@ -50,4 +50,16 @@ public class Content {
     return content.toString();
   }
 
+  public Content pri(String tildaText) {
+    boolean throughImport = false;
+    for (String part : tildaText.split("~")) {
+      if (throughImport) {
+        cl(part);
+      } else {
+        pr(part);
+      }
+      throughImport = !throughImport;
+    }
+    return this;
+  }
 }

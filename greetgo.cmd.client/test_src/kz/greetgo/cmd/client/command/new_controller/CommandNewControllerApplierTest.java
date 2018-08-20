@@ -15,6 +15,7 @@ import java.util.Date;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static kz.greetgo.cmd.core.util.ProjectParams.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class CommandNewControllerApplierTest {
 
@@ -31,8 +32,6 @@ public class CommandNewControllerApplierTest {
       .resolve("tests_data")
       .resolve(CommandNewControllerApplierTest.class.getSimpleName())
       .resolve("project-" + sdf.format(new Date()) + "-" + RND.intStr(4));
-
-
   }
 
   private void projectParam(String fileName, String value) throws Exception {
@@ -50,11 +49,20 @@ public class CommandNewControllerApplierTest {
     projectParam(REGISTER_IMPL_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/impl");
     projectParam(MYBATIS_DAO_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/dao");
     projectParam(MYBATIS_DAO_DATABASES_TXT, "Postgres\nOracle\nMysql\nMssql\nDb2");
+    projectParam(REGISTER_IMPL_TEST_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/impl");
+    projectParam(REGISTER_IMPL_TEST_BEFORE_CLASS_TXT, "@~kz.greetgo.depinject.testng.ContainerConfig~" +
+      "(~kz.greetgo.sandbox.register.test.util.BeanConfigTests~.class)\n" +
+      "@~java.lang.SuppressWarnings~(\"asd\")\n");
+    projectParam(REGISTER_IMPL_TEST_EXTENDS_TXT, "kz.greetgo.super_pup_er.TestParent");
+
+    projectParam(MYBATIS_TEST_DAO_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/test/beans/dao");
 
     Project project = Project.openProject(rootProjectDir);
 
-    CommandNewControllerApplier a = new CommandNewControllerApplier(project, "Test");
+    CommandNewControllerApplier a = new CommandNewControllerApplier(project, "HelloWorld");
 
     a.execute();
+
+    assertThat(1).isEqualTo(1);
   }
 }

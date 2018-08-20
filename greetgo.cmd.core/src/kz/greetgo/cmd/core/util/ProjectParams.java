@@ -16,6 +16,12 @@ public class ProjectParams {
   public static final String MYBATIS_DAO_PACKAGE_TXT = "mybatis-dao-package.txt";
   public static final String MYBATIS_DAO_DATABASES_TXT = "mybatis-dao-databases.txt";
 
+  public static final String REGISTER_IMPL_TEST_PACKAGE_TXT = "register-impl-test-package.txt";
+  public static final String REGISTER_IMPL_TEST_BEFORE_CLASS_TXT = "register-impl-test-before-class.txt";
+  public static final String REGISTER_IMPL_TEST_EXTENDS_TXT = "register-impl-test-extends.txt";
+
+  public static final String MYBATIS_TEST_DAO_PACKAGE_TXT = "mybatis-test-dao-package.txt";
+
   public static String readValue(Path pathToFile) {
     String value = readValueOrNull(pathToFile);
     return value == null ? "" : value;
