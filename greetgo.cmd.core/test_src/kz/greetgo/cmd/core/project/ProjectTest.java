@@ -11,9 +11,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static kz.greetgo.cmd.core.util.PathUtil.CONTROLLER_PACKAGE_TXT;
-import static kz.greetgo.cmd.core.util.PathUtil.DOT_GREETGO;
-import static kz.greetgo.cmd.core.util.PathUtil.PROJECT_NAME_TXT;
+import static kz.greetgo.cmd.core.util.ProjectParams.CONTROLLER_PACKAGE_TXT;
+import static kz.greetgo.cmd.core.util.ProjectParams.DOT_GREETGO;
+import static kz.greetgo.cmd.core.util.ProjectParams.PROJECT_NAME_TXT;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class ProjectTest {

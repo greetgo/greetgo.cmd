@@ -1,19 +1,15 @@
 package kz.greetgo.cmd.core.project;
 
-import kz.greetgo.cmd.core.util.PathUtil;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static kz.greetgo.cmd.core.util.PathUtil.toPoints;
 
 public class ClassRef {
-  private final Path sourceDir;
-  private final String packagePath;
   private final String name;
 
   private final Imports imports;
@@ -23,6 +19,16 @@ public class ClassRef {
   public ClassType type = ClassType.CLASS;
 
   private String parent = null;
+
+  public final PackageRef inPackage;
+
+  public ClassRef(PackageRef inPackage, String name) {
+    this.inPackage = inPackage;
+    this.name = name;
+    imports = new Imports(inPackage.packagePath);
+    content = new Content(imports);
+    beforeClass = new Content(imports);
+  }
 
   public void setParent(String parent) {
     this.parent = imports.name(parent);
@@ -39,27 +45,19 @@ public class ClassRef {
     return this;
   }
 
+  @SuppressWarnings("UnusedReturnValue")
   public ClassRef implement(Class<?> aClass) {
     return implement(aClass.getName());
   }
 
-  public ClassRef(Path sourceDir, String packagePath, String name) {
-    this.sourceDir = sourceDir;
-    this.packagePath = packagePath;
-    this.name = name;
-    imports = new Imports(packagePath);
-    content = new Content(imports);
-    beforeClass = new Content(imports);
-  }
-
   public String fullName() {
-    return PathUtil.toPoints(packagePath) + "." + name;
+    return toPoints(inPackage.packagePath) + "." + name;
   }
 
   public String text() {
     StringBuilder ret = new StringBuilder();
 
-    ret.append("package ").append(PathUtil.toPoints(packagePath)).append(";\n");
+    ret.append("package ").append(toPoints(inPackage.packagePath)).append(";\n");
     ret.append("\n");
     imports.content().forEach(line -> ret.append(line).append("\n"));
     ret.append("\n");
@@ -81,7 +79,7 @@ public class ClassRef {
   }
 
   public void save() {
-    File file = sourceDir.resolve(packagePath).resolve(name + ".java").toFile();
+    File file = inPackage.finishRoot().resolve(name + ".java").toFile();
     file.getParentFile().mkdirs();
     try {
       Files.write(file.toPath(), text().getBytes(UTF_8));
@@ -89,4 +87,5 @@ public class ClassRef {
       throw new RuntimeException(e);
     }
   }
+
 }

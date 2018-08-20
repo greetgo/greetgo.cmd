@@ -13,7 +13,7 @@ import java.util.Date;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class FileUtilTest {
+public class ProjectParamsTest {
 
   Path rootDir;
 
@@ -37,7 +37,7 @@ public class FileUtilTest {
 
     //
     //
-    String actualValue = FileUtil.readParamFile(filePath);
+    String actualValue = ProjectParams.readValue(filePath);
     //
     //
 
@@ -52,7 +52,7 @@ public class FileUtilTest {
 
     //
     //
-    String actualValue = FileUtil.readParamFile(filePath);
+    String actualValue = ProjectParams.readValue(filePath);
     //
     //
 
@@ -63,7 +63,7 @@ public class FileUtilTest {
   public void readParamFile_noFile() {
     //
     //
-    String actualValue = FileUtil.readParamFile(Paths.get(RND.str(10)));
+    String actualValue = ProjectParams.readValue(Paths.get(RND.str(10)));
     //
     //
 

@@ -1,6 +1,7 @@
 dependencies {
   compile "kz.greetgo.depinject:greetgo.depinject:$depinjectVersion"
   compile "kz.greetgo:greetgo.conf:$greetgoConfVersion"
+  compile group: 'org.mybatis', name: 'mybatis', version: '3.4.2'
 
   testCompile "kz.greetgo:greetgo.util:$greetgoUtilVersion"
 }

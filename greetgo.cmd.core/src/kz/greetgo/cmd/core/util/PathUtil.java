@@ -11,14 +11,8 @@ public class PathUtil {
     return Paths.get(System.getenv("CURRENT_WORKING_DIR"));
   }
 
-  public static final String DOT_GREETGO = ".greetgo";
-  public static final String PROJECT_NAME_TXT = "project-name.txt";
-  public static final String CONTROLLER_MARKER_INTERFACE_TXT = "controller-marker-interface.txt";
-  public static final String CONTROLLER_PACKAGE_TXT = "controller-package.txt";
-  public static final String REGISTER_INTERFACE_PACKAGE_TXT = "register-interface-package.txt";
-
   public static Path findRoot() {
-    return findDirWithFile(DOT_GREETGO, currentWorkingDir());
+    return findDirWithFile(ProjectParams.DOT_GREETGO, currentWorkingDir());
   }
 
   public static Path findDirWithFile(String simpleFileName, Path sourceDir) {
