@@ -29,7 +29,8 @@ public class ClassRefTest {
 
   @Test
   public void normalCreateFile() {
-    ClassRef classRef = new ClassRef(rootDir, "kz/greetgo/asd", "TestGenClass");
+    PackageRef packageRef = new PackageRef(rootDir, "", "kz/greetgo/asd");
+    ClassRef classRef = new ClassRef(packageRef, "TestGenClass");
     classRef.content.prn(1, "private String name;");
     classRef.content.pr(1, "private ").cl(SomeTestingClass.class).prn(" someTestingField;");
     classRef.content.pr(1, "private ").cl(Date.class).prn(" dateField;");

@@ -1,8 +1,11 @@
 package kz.greetgo.cmd.client.command;
 
 import kz.greetgo.cmd.client.command.new_controller.CommandNewController;
+import kz.greetgo.cmd.client.command.new_project.CommandNewProject;
+import kz.greetgo.cmd.client.command.new_sub.NewSubCommand;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommandNew extends CommandAbstract {
@@ -12,20 +15,32 @@ public class CommandNew extends CommandAbstract {
     out.println("      Creates new something. To see what type '" + usedCommand + ' ' + name() + "'");
   }
 
+  private final List<NewSubCommand> subCommandList = new ArrayList<>();
+
+  {
+    subCommandList.add(new CommandNewProject());
+    subCommandList.add(new CommandNewController());
+  }
+
   @Override
   public int exec(List<String> argList) {
+    for (NewSubCommand subCommand : subCommandList) {
+      subCommand.cmdPrefix = usedCommand + " " + name();
+    }
+
     if (argList.size() == 0) {
       return usage();
     }
 
-    String subCommand = argList.get(0);
-    if ("controller".equals(subCommand) || "c".equals(subCommand)) {
-      CommandNewController newController = new CommandNewController();
-      newController.usage = this::usage;
-      return newController.exec(argList.subList(1, argList.size()));
+    String strSubCommand = argList.get(0);
+
+    for (NewSubCommand command : subCommandList) {
+      if (command.accept(strSubCommand)) {
+        return command.exec(argList.subList(1, argList.size()));
+      }
     }
 
-    System.err.println("Unknown sub command " + subCommand);
+    System.err.println("Unknown sub command " + strSubCommand);
     System.err.println();
     return usage();
   }
@@ -33,15 +48,10 @@ public class CommandNew extends CommandAbstract {
   private int usage() {
     System.err.println("Usage:");
     System.err.println();
-    System.err.println("  " + usedCommand + " " + name() + " controller <Name>");
-    System.err.println("  or");
-    System.err.println("  " + usedCommand + " " + name() + " c <Name>");
-    System.err.println("      ");
-    System.err.println("      Creates new controller with name <Name>Controller");
-    System.err.println("      ");
-    System.err.println("      Note <Name> MUST starts with BIG letter");
-    System.err.println("      Note <Name> MUST NOT contains 'Controller' at the end");
-    System.err.println();
+    for (NewSubCommand subCommand : subCommandList) {
+      subCommand.printUsage();
+      System.err.println();
+    }
     return 1;
   }
 }

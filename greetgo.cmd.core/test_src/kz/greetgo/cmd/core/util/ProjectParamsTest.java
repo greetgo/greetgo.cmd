@@ -37,11 +37,11 @@ public class ProjectParamsTest {
 
     //
     //
-    String actualValue = ProjectParams.readValue(filePath);
+    ReadResult actualValue = ProjectParams.readValue(filePath);
     //
     //
 
-    assertThat(actualValue).isEqualTo(value);
+    assertThat(actualValue.get()).isEqualTo(value);
   }
 
   @Test
@@ -52,21 +52,23 @@ public class ProjectParamsTest {
 
     //
     //
-    String actualValue = ProjectParams.readValue(filePath);
+    ReadResult actualValue = ProjectParams.readValue(filePath);
     //
     //
 
-    assertThat(actualValue).isEmpty();
+    assertThat(actualValue.isFileAbsent()).isFalse();
+    assertThat(actualValue.isValueAbsent()).isTrue();
   }
 
   @Test
   public void readParamFile_noFile() {
     //
     //
-    String actualValue = ProjectParams.readValue(Paths.get(RND.str(10)));
+    ReadResult actualValue = ProjectParams.readValue(Paths.get(RND.str(10)));
     //
     //
 
-    assertThat(actualValue).isEmpty();
+    assertThat(actualValue.isFileAbsent()).isTrue();
+    assertThat(actualValue.isValueAbsent()).isTrue();
   }
 }
