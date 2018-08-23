@@ -2,6 +2,7 @@ package kz.greetgo.cmd.client.launcher;
 
 import kz.greetgo.cmd.client.command.CmdBuilder;
 import kz.greetgo.cmd.client.command.Command;
+import kz.greetgo.cmd.core.errors.SimpleExit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,16 +10,30 @@ import java.util.List;
 
 public class Launcher {
   public static void main(String[] args) {
-    System.exit(new Launcher().exec(args));
+    try {
+      new Launcher().exec(args);
+    } catch (RuntimeException e) {
+
+      SimpleExit simpleExit = SimpleExit.extract(e);
+
+      if (simpleExit != null) {
+        System.exit(simpleExit.exitCode);
+        return;
+      }
+
+      //noinspection ConstantConditions
+      simpleExit.printStackTrace();
+      System.exit(255);
+    }
   }
 
-  private int exec(String[] args) {
+  private void exec(String[] args) {
     String cmd = System.getenv("USED_COMMAND");
-    CmdBuilder cmdBuilder = CmdBuilder.newCmdBuilder()
-      .setUsedCommand(cmd);
+    CmdBuilder cmdBuilder = CmdBuilder.newCmdBuilder().setUsedCommand(cmd);
 
     if (args.length == 0) {
-      return usage(cmd, cmdBuilder);
+      usage(cmd, cmdBuilder);
+      throw new SimpleExit(1);
     }
 
     String commandName = args[0];
@@ -26,23 +41,24 @@ public class Launcher {
 
     for (Command command : cmdBuilder.allCommands()) {
       if (command.name().equals(commandName)) {
-        return command.exec(argList);
+        command.exec(argList);
+        return;
       }
     }
 
     System.err.println("Unknown command " + commandName);
     System.err.println();
 
-    return usage(cmd, cmdBuilder);
+    usage(cmd, cmdBuilder);
+    throw new SimpleExit(1);
   }
 
-  private int usage(String cmd, CmdBuilder cmdBuilder) {
+  private void usage(String cmd, CmdBuilder cmdBuilder) {
     System.err.println("Usage: " + cmd + " <command>");
     System.err.println();
     for (Command command : cmdBuilder.allCommands()) {
       command.printShortHelpTo(System.err);
       System.err.println();
     }
-    return 1;
   }
 }

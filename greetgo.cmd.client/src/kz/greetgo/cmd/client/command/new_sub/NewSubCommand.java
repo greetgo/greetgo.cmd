@@ -6,7 +6,7 @@ public abstract class NewSubCommand {
 
   public String cmdPrefix;
 
-  public abstract int exec(List<String> argList);
+  public abstract void exec(List<String> argList);
 
   public abstract boolean accept(String strSubCommand);
 

@@ -1,8 +1,9 @@
 package kz.greetgo.cmd.client.command.new_project;
 
 import kz.greetgo.cmd.client.command.new_sub.NewSubCommand;
-import kz.greetgo.cmd.core.util.Locations;
+import kz.greetgo.cmd.core.errors.SimpleExit;
 import kz.greetgo.cmd.core.git.Git;
+import kz.greetgo.cmd.core.util.Locations;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -16,12 +17,8 @@ public class CommandNewProject extends NewSubCommand {
   private final LinkedHashMap<String, ProjectTemplate> templateMap = new LinkedHashMap<>();
 
   {
-    addTemplate("depinject-vue-vuex",
-      "https://github.com/greetgo/greetgo.sandbox.git",
-      "Server based on depinject.\nClient - one page, used VueJS with vuex (vuex-typex)");
-    addTemplate("depinject-angular",
-      "https://github.com/greetgo/greetgo.sandbox.git",
-      "Server based on depinject.\nClient - one page, used angular");
+    addTemplate("depinject-vue-vuex", "https://github.com/greetgo/greetgo.sandbox.git", "Server based on depinject.\nClient - one page, used VueJS with vuex (vuex-typex)");
+    addTemplate("depinject-angular", "https://github.com/greetgo/greetgo.sandbox.git", "Server based on depinject.\nClient - one page, used angular");
   }
 
   private String projectName = "a-project-name";
@@ -35,7 +32,7 @@ public class CommandNewProject extends NewSubCommand {
   }
 
   @Override
-  public int exec(List<String> subList) {
+  public void exec(List<String> subList) {
 
     if (subList.size() >= 1) {
       projectName = subList.get(0);
@@ -43,38 +40,42 @@ public class CommandNewProject extends NewSubCommand {
 
     if (subList.size() < 2) {
       System.err.println("Incomplete command. Usage: \n");
-      return usage();
+      usage();
+      throw new SimpleExit(1);
     }
 
     templateName = subList.get(1);
 
     if (!templateMap.containsKey(templateName)) {
-      return unknownTemplate();
+      unknownTemplate();
+      throw new SimpleExit(1);
     }
 
     if (subList.size() == 2) {
-      return listVariants();
+      listVariants();
+      throw new SimpleExit(1);
     }
 
     templateVariant = subList.get(2);
 
     if (subList.size() == 3) {
-      return executeCommand();
+      executeCommand();
+      return;
     }
 
     System.err.println("Too many command arguments. Usage:\n");
 
-    return usage();
+    usage();
+    throw new SimpleExit(1);
   }
 
-  private int unknownTemplate() {
+  private void unknownTemplate() {
     System.err.println("Unknown template `" + templateName + "'. Usage:\n");
-    return usage();
+    usage();
   }
 
-  private int usage() {
+  private void usage() {
     printUsage();
-    return 1;
   }
 
   @Override
@@ -126,9 +127,7 @@ public class CommandNewProject extends NewSubCommand {
 
       String name = prefixSpace + toLenRight(pt.name, maxNameLength) + " - ";
       String space = spaces(name.length());
-      String description = Arrays.stream(pt.description.split("\n"))
-        .map(String::trim)
-        .collect(Collectors.joining("\n" + space));
+      String description = Arrays.stream(pt.description.split("\n")).map(String::trim).collect(Collectors.joining("\n" + space));
 
       System.err.println(prefixSpace);
       System.err.println(name + description);
@@ -142,9 +141,9 @@ public class CommandNewProject extends NewSubCommand {
     }
   }
 
-  private int executeCommand() {
+  private void executeCommand() {
     System.err.println("Unknown variant `" + templateVariant + "' of template `" + templateName + "'.\n");
-    return listVariants();
+    listVariants();
   }
 
   private static Path templatesDir() {
@@ -155,14 +154,15 @@ public class CommandNewProject extends NewSubCommand {
     return templatesDir().resolve(templateName).resolve("git-repo");
   }
 
-  private int listVariants() {
+  private void listVariants() {
     System.err.println("You an use following variants:\n");
     String cmd = cmdPrefix + " project " + projectName + ' ' + templateName + ' ';
     System.err.println("list variants of: " + cmd);
 
     ProjectTemplate projectTemplate = templateMap.get(templateName);
     if (projectTemplate == null) {
-      return unknownTemplate();
+      unknownTemplate();
+      throw new SimpleExit(1);
     }
 
     Path gitPath = gitRepoPath(templateName);
@@ -183,7 +183,5 @@ public class CommandNewProject extends NewSubCommand {
         }
       }
     }
-
-    return 1;
   }
 }

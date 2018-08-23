@@ -3,6 +3,7 @@ package kz.greetgo.cmd.client.command;
 import kz.greetgo.cmd.client.command.new_controller.CommandNewController;
 import kz.greetgo.cmd.client.command.new_project.CommandNewProject;
 import kz.greetgo.cmd.client.command.new_sub.NewSubCommand;
+import kz.greetgo.cmd.core.errors.SimpleExit;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -23,35 +24,37 @@ public class CommandNew extends CommandAbstract {
   }
 
   @Override
-  public int exec(List<String> argList) {
+  public void exec(List<String> argList) {
     for (NewSubCommand subCommand : subCommandList) {
       subCommand.cmdPrefix = usedCommand + " " + name();
     }
 
     if (argList.size() == 0) {
-      return usage();
+      usage();
+      throw new SimpleExit(1);
     }
 
     String strSubCommand = argList.get(0);
 
     for (NewSubCommand command : subCommandList) {
       if (command.accept(strSubCommand)) {
-        return command.exec(argList.subList(1, argList.size()));
+        command.exec(argList.subList(1, argList.size()));
+        return;
       }
     }
 
     System.err.println("Unknown sub command " + strSubCommand);
     System.err.println();
-    return usage();
+    usage();
+    throw new SimpleExit(1);
   }
 
-  private int usage() {
+  private void usage() {
     System.err.println("Usage:");
     System.err.println();
     for (NewSubCommand subCommand : subCommandList) {
       subCommand.printUsage();
       System.err.println();
     }
-    return 1;
   }
 }

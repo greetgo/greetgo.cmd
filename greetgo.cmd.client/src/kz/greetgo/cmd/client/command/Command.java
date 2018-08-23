@@ -1,5 +1,7 @@
 package kz.greetgo.cmd.client.command;
 
+import kz.greetgo.cmd.core.errors.SimpleExit;
+
 import java.io.PrintStream;
 import java.util.List;
 
@@ -8,5 +10,5 @@ public interface Command {
 
   void printShortHelpTo(PrintStream out);
 
-  int exec(List<String> argList);
+  void exec(List<String> argList) throws SimpleExit;
 }

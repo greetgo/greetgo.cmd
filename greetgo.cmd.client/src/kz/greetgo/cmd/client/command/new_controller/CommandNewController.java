@@ -1,6 +1,7 @@
 package kz.greetgo.cmd.client.command.new_controller;
 
 import kz.greetgo.cmd.client.command.new_sub.NewSubCommand;
+import kz.greetgo.cmd.core.errors.SimpleExit;
 import kz.greetgo.cmd.core.project.Project;
 import kz.greetgo.cmd.core.util.PathUtil;
 
@@ -9,12 +10,12 @@ import java.util.List;
 public class CommandNewController extends NewSubCommand {
 
   @Override
-  public int exec(List<String> argList) {
+  public void exec(List<String> argList) {
     if (argList.size() == 0) {
       System.err.println("Not specified controller name. Usage:");
       System.err.println();
       printUsage();
-      return 1;
+      throw new SimpleExit(1);
     }
 
     String name = argList.get(0);
@@ -24,12 +25,14 @@ public class CommandNewController extends NewSubCommand {
       Project project = Project.openProject(PathUtil.findRoot());
 
       CommandNewControllerApplier a = new CommandNewControllerApplier(project, name);
-
       a.execute();
-      return 0;
+
+      return;
+
     } catch (RuntimeException e) {
       e.printStackTrace();
-      return 100;
+
+      throw new SimpleExit(100);
     }
   }
 
