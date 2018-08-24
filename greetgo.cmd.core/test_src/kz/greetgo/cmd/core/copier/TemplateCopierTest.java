@@ -100,7 +100,7 @@ public class TemplateCopierTest {
   public void copy_renameDir() throws Exception {
 
     file("top_dir/dir/sub_dir/a_file.txt", "hello");
-    file("top_dir/dir.modifier.txt", "rename-to=PROJECT_NAME-hi");
+    file("top_dir/dir.modifier.txt", "rename-to={PROJECT_NAME}-hi");
 
     TemplateCopier.of()
       .from(fromDir)
@@ -134,7 +134,7 @@ public class TemplateCopierTest {
   public void copy_withReplaceIn() throws IOException {
     file("dir/file.txt", "\n"
       + "\n"
-      + "///MODIFY replace saturn\\d+ PROJECT_NAME-name\n"
+      + "///MODIFY replace saturn\\d+ {PROJECT_NAME}-name\n"
       + "It is saturn327 hello world\n");
 
     TemplateCopier.of()
@@ -147,5 +147,26 @@ public class TemplateCopierTest {
     assertThat(to("dir/file.txt").get()).isEqualTo("\n"
       + "\n"
       + "It is test-project-name hello world\n");
+  }
+
+  @Test
+  public void copy_withSomeReplaceIn() throws IOException {
+    file("dir/file.txt", "\n"
+      + "\n"
+      + "///MODIFY replace saturn\\d+ {PROJECT_NAME}-name\n"
+      + "///MODIFY replace hello {ASD}\n"
+      + "It is saturn327 hello saturn11 world-hello\n");
+
+    TemplateCopier.of()
+      .from(fromDir)
+      .to(toDir)
+      .setVariable("PROJECT_NAME", "test-project")
+      .setVariable("ASD", "moon")
+      .copy()
+    ;
+
+    assertThat(to("dir/file.txt").get()).isEqualTo("\n"
+      + "\n"
+      + "It is test-project-name moon test-project-name world-moon\n");
   }
 }

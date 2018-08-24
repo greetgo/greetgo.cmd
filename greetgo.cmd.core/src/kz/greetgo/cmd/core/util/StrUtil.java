@@ -1,14 +1,23 @@
 package kz.greetgo.cmd.core.util;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 public class StrUtil {
   public static String firstLower(String s) {
     if (s == null) { return null; }
     if (s.length() == 0) { return ""; }
     return s.substring(0, 1).toLowerCase() + s.substring(1);
+  }
+
+  public static String firstUpper(String s) {
+    if (s == null) { return null; }
+    if (s.length() == 0) { return ""; }
+    return s.substring(0, 1).toUpperCase() + s.substring(1);
   }
 
   public static String toUnderscore(String s) {
@@ -100,5 +109,38 @@ public class StrUtil {
     }
 
     return ret;
+  }
+
+  public static String toCamelCase(String str) {
+    if (str == null) {
+      return "";
+    }
+    return Arrays.stream(str.toLowerCase()
+      .replace('-', ' ')
+      .replace('_', ' ')
+      .trim()
+      .split("\\s+"))
+      .map(StrUtil::firstUpper)
+      .collect(Collectors.joining())
+      ;
+  }
+
+  private static final String ENG = "abcdefghijklmnopqrstuvwxyz";
+  private static final String DEG = "0123456789";
+  private static final char[] ALL = (ENG.toLowerCase() + ENG.toUpperCase() + DEG).toCharArray();
+
+  private static final Random RND = new SecureRandom();
+
+  @SuppressWarnings("SameParameterValue")
+  public static String rndStr(int length) {
+    char[] ret = new char[length];
+    for (int i = 0; i < length; i++) {
+      ret[i] = ALL[RND.nextInt(ALL.length)];
+    }
+    return new String(ret);
+  }
+
+  public static String generateSalt() {
+    return rndStr(10);
   }
 }

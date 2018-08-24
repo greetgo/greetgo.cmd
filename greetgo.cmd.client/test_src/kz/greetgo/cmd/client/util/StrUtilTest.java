@@ -1,7 +1,10 @@
 package kz.greetgo.cmd.client.util;
 
 import kz.greetgo.cmd.core.util.StrUtil;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -63,7 +66,7 @@ public class StrUtilTest {
   }
 
   @Test
-  public void toUnderscore_manyBigs() {
+  public void toUnderscore_manyBig() {
     //
     //
     String result = StrUtil.toUnderscore("CIAHelloCKKPSSWorldFBI");
@@ -76,6 +79,39 @@ public class StrUtilTest {
   @Test
   public void splitOnLines() {
     String s = "asd\ndsa\n";
-    assertThat(StrUtil.splitOnLines(s)).hasSize(3);
+
+    //
+    //
+    List<String> actual = StrUtil.splitOnLines(s);
+    //
+    //
+
+    assertThat(actual).hasSize(3);
   }
+
+  @DataProvider
+  public Object[][] toCamelCase_DP() {
+    return new Object[][]{
+      {"helLo-world", "HelloWorld"},
+      {"hello_worLd", "HelloWorld"},
+      {"_hello_world", "HelloWorld"},
+      {"_hello___wOrld_", "HelloWorld"},
+      {"-hello_-_world-", "HelloWorld"},
+      {"-hello---world-", "HelloWorld"},
+      {null, ""},
+    };
+  }
+
+  @Test(dataProvider = "toCamelCase_DP")
+  public void toCamelCase(String input, String expected) {
+
+    //
+    //
+    String actual = StrUtil.toCamelCase(input);
+    //
+    //
+
+    assertThat(actual).isEqualTo(expected);
+  }
+
 }

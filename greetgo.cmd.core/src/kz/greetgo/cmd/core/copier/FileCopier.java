@@ -102,32 +102,35 @@ public class FileCopier {
   private List<String> modify(List<String> lines) {
     List<String> ret = new ArrayList<>();
 
-    for (int i = 0, size = lines.size(); i < size; i++) {
+    List<String> modifyList = new ArrayList<>();
 
-      String line = lines.get(i);
+    int lineNo = 0;
 
+    for (String line : lines) {
+      lineNo++;
       if (line.startsWith("///MODIFY ")
         || line.startsWith("###MODIFY ")
       ) {
-        if (i == size - 1) {
-          throw new RuntimeException("Cannot modify: line " + (i + 1) + " in " + fromFile);
-        }
-
-        ret.add(modifyLine(line.substring("###MODIFY ".length()).trim(), lines.get(i + 1), i + 1));
-
-        i++;
-
+        modifyList.add(line.substring("###MODIFY ".length()).trim());
         continue;
       }
 
-      ret.add(line);
+      ret.add(modifyLine(line, modifyList, lineNo));
+      modifyList.clear();
     }
 
     return ret;
   }
 
-  private String modifyLine(String modifyLine, String nextLine, int line) {
-    String[] split = modifyLine.split("\\s+");
+  private String modifyLine(String line, List<String> modifyList, int lineNo) {
+    for (String modifyCmd : modifyList) {
+      line = modifyStr(modifyCmd, line, lineNo);
+    }
+    return line;
+  }
+
+  private String modifyStr(String modifyCmd, String nextLine, int line) {
+    String[] split = modifyCmd.split("\\s+");
     if (split.length == 3 && split[0].equals("replace")) {
       String regexp = split[1];
       String replacement = updateValue(split[2]);
@@ -144,7 +147,7 @@ public class FileCopier {
       return result.toString();
     }
 
-    throw new RuntimeException("Unknown modify command: `" + modifyLine + "' at line " + line + " in " + fromFile);
+    throw new RuntimeException("Unknown modify command: `" + modifyCmd + "' at line " + line + " in " + fromFile);
   }
 
   private void writeToDestination(byte[] bytes) throws IOException {
@@ -256,7 +259,7 @@ public class FileCopier {
 
   private String updateValue(String value) {
     for (Map.Entry<String, String> e : getVariableMap().entrySet()) {
-      value = value.replaceAll(e.getKey(), e.getValue());
+      value = value.replaceAll("\\{" + e.getKey() + "}", e.getValue());
     }
     return value;
   }

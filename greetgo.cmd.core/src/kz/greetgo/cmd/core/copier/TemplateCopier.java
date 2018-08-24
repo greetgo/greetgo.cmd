@@ -48,6 +48,7 @@ public class TemplateCopier {
     String name = file.getName().toLowerCase();
 
     return name.endsWith(".txt")
+      || name.endsWith(".xml")
       || name.endsWith(".java")
       || name.endsWith(".gradle")
       || name.endsWith(".sh")
