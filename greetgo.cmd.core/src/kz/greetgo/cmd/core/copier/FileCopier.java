@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -82,7 +84,9 @@ public class FileCopier {
 
       } else {
 
-        List<String> lines = Files.readAllLines(fromFile.toPath());
+        List<String> lines = StrUtil.splitOnLines(new String(Files.readAllBytes(fromFile.toPath()), UTF_8));
+
+        lines = modify(lines);
 
         byte[] bytes = lines.stream().collect(Collectors.joining(newLine)).getBytes(UTF_8);
 
@@ -93,6 +97,54 @@ public class FileCopier {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private List<String> modify(List<String> lines) {
+    List<String> ret = new ArrayList<>();
+
+    for (int i = 0, size = lines.size(); i < size; i++) {
+
+      String line = lines.get(i);
+
+      if (line.startsWith("///MODIFY ")
+        || line.startsWith("###MODIFY ")
+      ) {
+        if (i == size - 1) {
+          throw new RuntimeException("Cannot modify: line " + (i + 1) + " in " + fromFile);
+        }
+
+        ret.add(modifyLine(line.substring("###MODIFY ".length()).trim(), lines.get(i + 1), i + 1));
+
+        i++;
+
+        continue;
+      }
+
+      ret.add(line);
+    }
+
+    return ret;
+  }
+
+  private String modifyLine(String modifyLine, String nextLine, int line) {
+    String[] split = modifyLine.split("\\s+");
+    if (split.length == 3 && split[0].equals("replace")) {
+      String regexp = split[1];
+      String replacement = updateValue(split[2]);
+
+      Pattern r = Pattern.compile(regexp);
+
+      StringBuffer result = new StringBuffer();
+      Matcher matcher = r.matcher(nextLine);
+      while (matcher.find()) {
+        matcher.appendReplacement(result, replacement);
+      }
+      matcher.appendTail(result);
+
+      return result.toString();
+    }
+
+    throw new RuntimeException("Unknown modify command: `" + modifyLine + "' at line " + line + " in " + fromFile);
   }
 
   private void writeToDestination(byte[] bytes) throws IOException {
@@ -199,11 +251,14 @@ public class FileCopier {
   }
 
   private void renameTo(String newName) {
-    newName = newName.trim();
+    toName = updateValue(newName.trim());
+  }
+
+  private String updateValue(String value) {
     for (Map.Entry<String, String> e : getVariableMap().entrySet()) {
-      newName = newName.replaceAll(e.getKey(), e.getValue());
+      value = value.replaceAll(e.getKey(), e.getValue());
     }
-    toName = newName;
+    return value;
   }
 
   private FileCopier getLiveParent() {
@@ -236,6 +291,7 @@ public class FileCopier {
     return this;
   }
 
+  @SuppressWarnings("unused")
   public void showYourself() {
     String end = fromFile.isDirectory() ? "/" : "";
     StringBuilder pr = new StringBuilder(spaces(level * 2) + fromFile.getName() + end);

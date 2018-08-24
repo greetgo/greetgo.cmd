@@ -114,7 +114,6 @@ public class TemplateCopierTest {
     assertThat(to("top_dir/test_name-hi/sub_dir/a_file.txt").get()).isEqualTo("hello");
   }
 
-
   @Test
   public void copy_binaryCopy() throws Exception {
 
@@ -131,4 +130,22 @@ public class TemplateCopierTest {
     assertThat(toBytes("top_dir/dir/sub_dir/bin_file").get()).isEqualTo(bytes);
   }
 
+  @Test
+  public void copy_withReplaceIn() throws IOException {
+    file("dir/file.txt", "\n"
+      + "\n"
+      + "///MODIFY replace saturn\\d+ PROJECT_NAME-name\n"
+      + "It is saturn327 hello world\n");
+
+    TemplateCopier.of()
+      .from(fromDir)
+      .to(toDir)
+      .setVariable("PROJECT_NAME", "test-project")
+      .copy()
+    ;
+
+    assertThat(to("dir/file.txt").get()).isEqualTo("\n"
+      + "\n"
+      + "It is test-project-name hello world\n");
+  }
 }

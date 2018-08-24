@@ -1,5 +1,9 @@
 package kz.greetgo.cmd.core.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class StrUtil {
   public static String firstLower(String s) {
     if (s == null) { return null; }
@@ -85,5 +89,16 @@ public class StrUtil {
       || "yes".equals(value)
       || "y".equals(value)
       || "1".equals(value);
+  }
+
+  public static List<String> splitOnLines(String str) {
+
+    List<String> ret = new ArrayList<>(Arrays.asList(str.split("\n")));
+
+    if (str.endsWith("\n")) {
+      ret.add("");
+    }
+
+    return ret;
   }
 }

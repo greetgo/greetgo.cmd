@@ -72,4 +72,10 @@ public class StrUtilTest {
 
     assertThat(result).isEqualTo("cia_hello_ckkpss_world_fbi");
   }
+
+  @Test
+  public void splitOnLines() {
+    String s = "asd\ndsa\n";
+    assertThat(StrUtil.splitOnLines(s)).hasSize(3);
+  }
 }
