@@ -1,8 +1,11 @@
 package kz.greetgo.cmd.client.command.new_project;
 
 import kz.greetgo.cmd.client.command.new_sub.NewSubCommand;
+import kz.greetgo.cmd.core.util.StrUtil;
+import kz.greetgo.cmd.core.copier.TemplateCopier;
 import kz.greetgo.cmd.core.errors.SimpleExit;
 import kz.greetgo.cmd.core.git.Git;
+import kz.greetgo.cmd.core.util.AppUtil;
 import kz.greetgo.cmd.core.util.Locations;
 
 import java.io.File;
@@ -10,6 +13,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CommandNewProject extends NewSubCommand {
@@ -83,14 +88,6 @@ public class CommandNewProject extends NewSubCommand {
     return "project".equals(strSubCommand) || "p".equals(strSubCommand);
   }
 
-  private static String spaces(int len) {
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < len; i++) {
-      sb.append(' ');
-    }
-    return sb.toString();
-  }
-
   private static String toLenRight(String name, int length) {
     StringBuilder sb = new StringBuilder();
     sb.append(name);
@@ -109,7 +106,7 @@ public class CommandNewProject extends NewSubCommand {
     System.err.println("      ");
     System.err.println("      You can use following templates:");
 
-    String prefixSpace = spaces(8);
+    String prefixSpace = StrUtil.spaces(8);
 
     int maxNameLength = templateMap.values().stream().mapToInt(s -> s.name.length()).max().orElse(1);
     String nameHeader = "<TemplateName>";
@@ -126,7 +123,7 @@ public class CommandNewProject extends NewSubCommand {
     for (ProjectTemplate pt : templateMap.values()) {
 
       String name = prefixSpace + toLenRight(pt.name, maxNameLength) + " - ";
-      String space = spaces(name.length());
+      String space = StrUtil.spaces(name.length());
       String description = Arrays.stream(pt.description.split("\n")).map(String::trim).collect(Collectors.joining("\n" + space));
 
       System.err.println(prefixSpace);
@@ -142,8 +139,36 @@ public class CommandNewProject extends NewSubCommand {
   }
 
   private void executeCommand() {
-    System.err.println("Unknown variant `" + templateVariant + "' of template `" + templateName + "'.\n");
-    listVariants();
+    Path gitPath = prepareTemplate();
+
+    Set<String> variantSet = Git.listRemoteBranches(gitPath)
+      .stream()
+      .map(this::extractVariant)
+      .filter(Objects::nonNull)
+      .collect(Collectors.toSet());
+
+    if (!variantSet.contains(templateVariant)) {
+      System.err.println("Unknown variant `" + templateVariant + "'.");
+      listVariants();
+      throw new SimpleExit(1);
+    }
+
+    Git.checkout(gitPath, templateBranchName());
+
+    if (AppUtil.currentWorkingDir().resolve(projectName).toFile().exists()) {
+      System.err.println("Directory `" + projectName + "' already exists");
+      throw new SimpleExit(1);
+    }
+
+    if (AppUtil.currentWorkingDir().resolve(projectName).toFile().mkdir()) {
+      System.err.println("Cannot create directory `" + projectName + "'");
+      throw new SimpleExit(10);
+    }
+
+    TemplateCopier.of()
+      .from(gitPath)
+      .to(AppUtil.currentWorkingDir().resolve(projectName))
+      .copy();
   }
 
   private static Path templatesDir() {
@@ -154,11 +179,31 @@ public class CommandNewProject extends NewSubCommand {
     return templatesDir().resolve(templateName).resolve("git-repo");
   }
 
+  private String extractVariant(String branchName) {
+    if (!branchName.startsWith("t-" + templateName + "-")) { return null; }
+    return branchName.substring(templateName.length() + 3);
+  }
+
+  private String templateBranchName() {
+    return "t-" + templateName + "-" + templateVariant;
+  }
+
   private void listVariants() {
     System.err.println("You an use following variants:\n");
     String cmd = cmdPrefix + " project " + projectName + ' ' + templateName + ' ';
     System.err.println("list variants of: " + cmd);
 
+    Path gitPath = prepareTemplate();
+
+    Git.listRemoteBranches(gitPath)
+      .stream()
+      .map(this::extractVariant)
+      .filter(Objects::nonNull)
+      .forEachOrdered(variant -> System.err.println(cmd + variant));
+
+  }
+
+  private Path prepareTemplate() {
     ProjectTemplate projectTemplate = templateMap.get(templateName);
     if (projectTemplate == null) {
       unknownTemplate();
@@ -175,13 +220,6 @@ public class CommandNewProject extends NewSubCommand {
       Git.gitClone(parentFile.toPath(), projectTemplate.gitUrl, gitPath.toFile().getName());
     }
 
-    for (String branch : Git.listRemoteBranches(gitPath)) {
-      if (branch.startsWith("t-" + templateName + "-")) {
-        String variant = branch.substring(templateName.length() + 3);
-        if (variant.length() > 0) {
-          System.err.println(cmd + variant);
-        }
-      }
-    }
+    return gitPath;
   }
 }

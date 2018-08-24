@@ -3,6 +3,7 @@ package kz.greetgo.cmd.client.launcher;
 import kz.greetgo.cmd.client.command.CmdBuilder;
 import kz.greetgo.cmd.client.command.Command;
 import kz.greetgo.cmd.core.errors.SimpleExit;
+import kz.greetgo.cmd.core.util.AppUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,14 +22,13 @@ public class Launcher {
         return;
       }
 
-      //noinspection ConstantConditions
-      simpleExit.printStackTrace();
+      e.printStackTrace();
       System.exit(255);
     }
   }
 
   private void exec(String[] args) {
-    String cmd = System.getenv("USED_COMMAND");
+    String cmd = AppUtil.usedCommand();
     CmdBuilder cmdBuilder = CmdBuilder.newCmdBuilder().setUsedCommand(cmd);
 
     if (args.length == 0) {

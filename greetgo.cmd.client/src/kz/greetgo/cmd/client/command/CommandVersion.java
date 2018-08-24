@@ -1,6 +1,7 @@
 package kz.greetgo.cmd.client.command;
 
 import kz.greetgo.cmd.core.errors.SimpleExit;
+import kz.greetgo.cmd.core.util.AppUtil;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -18,16 +19,14 @@ public class CommandVersion extends CommandAbstract {
   @Override
   public void exec(List<String> argList) {
     if (argList.size() == 0) {
-      String specificationVersion = getClass().getPackage().getSpecificationVersion();
-      System.out.println("version = " + specificationVersion);
-      String implementationVersion = getClass().getPackage().getImplementationVersion();
-      System.out.println("git = " + implementationVersion);
-      System.out.println("USED_COMMAND = " + System.getenv("USED_COMMAND"));
-      System.out.println("CURRENT_WORKING_DIR = " + System.getenv("CURRENT_WORKING_DIR"));
+      System.out.println("version = " + AppUtil.version());
+      System.out.println("gitId = " + AppUtil.gitId());
+      System.out.println("USED_COMMAND = " + AppUtil.usedCommand());
+      System.out.println("CURRENT_WORKING_DIR = " + AppUtil.currentWorkingDir());
       return;
     }
 
-    System.err.println("While parameters not works");
+    System.err.println("While parameters not work");
     throw new SimpleExit(1);
   }
 }

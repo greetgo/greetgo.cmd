@@ -17,7 +17,7 @@ public class ClassRefTest {
   Path rootDir;
 
   @BeforeMethod
-  public void setUp() {
+  public void createRootDir() {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
     rootDir = Paths.get("build")

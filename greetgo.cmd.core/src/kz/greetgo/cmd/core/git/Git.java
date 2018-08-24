@@ -26,4 +26,8 @@ public class Git {
       .collect(Collectors.toList())
       ;
   }
+
+  public static void checkout(Path gitPath, String branchName) {
+    executeCommand(gitPath, "git", "checkout", "--force", branchName).ok();
+  }
 }

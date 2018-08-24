@@ -1,5 +1,6 @@
 package kz.greetgo.cmd.client.util;
 
+import kz.greetgo.cmd.core.util.StrUtil;
 import org.testng.annotations.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;

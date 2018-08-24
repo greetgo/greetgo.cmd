@@ -4,15 +4,10 @@ import kz.greetgo.cmd.core.errors.CannotFindDirWithFile;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class PathUtil {
-  public static Path currentWorkingDir() {
-    return Paths.get(System.getenv("CURRENT_WORKING_DIR"));
-  }
-
   public static Path findRoot() {
-    return findDirWithFile(ProjectParams.DOT_GREETGO, currentWorkingDir());
+    return findDirWithFile(ProjectParams.DOT_GREETGO, AppUtil.currentWorkingDir());
   }
 
   public static Path findDirWithFile(String simpleFileName, Path sourceDir) {
@@ -26,7 +21,9 @@ public class PathUtil {
 
       current = current.getParentFile();
 
-      if (current == null) throw new CannotFindDirWithFile(simpleFileName, sourceDir);
+      if (current == null) {
+        throw new CannotFindDirWithFile(simpleFileName, sourceDir);
+      }
     }
   }
 

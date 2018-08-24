@@ -16,8 +16,8 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static kz.greetgo.cmd.client.util.StrUtil.firstLower;
-import static kz.greetgo.cmd.client.util.StrUtil.toUnderscore;
+import static kz.greetgo.cmd.core.util.StrUtil.firstLower;
+import static kz.greetgo.cmd.core.util.StrUtil.toUnderscore;
 
 public class CommandNewControllerApplier {
   private final Project project;

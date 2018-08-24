@@ -1,18 +1,18 @@
-package kz.greetgo.cmd.client.util;
+package kz.greetgo.cmd.core.util;
 
 public class StrUtil {
   public static String firstLower(String s) {
-    if (s == null) return null;
-    if (s.length() == 0) return "";
+    if (s == null) { return null; }
+    if (s.length() == 0) { return ""; }
     return s.substring(0, 1).toLowerCase() + s.substring(1);
   }
 
   public static String toUnderscore(String s) {
-    if (s == null) return null;
+    if (s == null) { return null; }
 
     int length = s.length();
 
-    if (length == 0) return "";
+    if (length == 0) { return ""; }
 
     char arr[] = s.toCharArray();
 
@@ -56,5 +56,34 @@ public class StrUtil {
     }
 
     return new String(result, 0, index);
+  }
+
+  public static String spaces(int len) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < len; i++) {
+      sb.append(' ');
+    }
+    return sb.toString();
+  }
+
+  public static boolean toBool(String value) {
+    if (value == null) {
+      return false;
+    }
+
+    value = value.trim().toLowerCase();
+
+    return "true".equals(value)
+      || "t".equals(value)
+      || "да".equals(value)
+      || "д".equals(value)
+      || "истина".equals(value)
+      || "и".equals(value)
+      || "真相".equals(value)
+      || "是的".equals(value)
+      || "on".equals(value)
+      || "yes".equals(value)
+      || "y".equals(value)
+      || "1".equals(value);
   }
 }
