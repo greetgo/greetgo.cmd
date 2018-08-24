@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -61,12 +62,12 @@ public class FileCopier {
       return;
     }
 
-    applyOnlyMe();
+    applyOnlyMine();
 
     children.forEach(FileCopier::apply);
   }
 
-  private void applyOnlyMe() {
+  private void applyOnlyMine() {
     if (!fromFile.isFile()) {
       return;
     }
@@ -102,17 +103,17 @@ public class FileCopier {
 
   BinStatus binStatus = BinStatus.AUTO;
 
-  public List<String> binExtList = null;
+  public Predicate<File> checkIsFileTextual = null;
 
-  public List<String> getBinExtList() {
+  public Predicate<File> getCheckIsFileTextual() {
     {
-      List<String> localBinExtList = binExtList;
-      if (localBinExtList != null) {
-        return localBinExtList;
+      Predicate<File> local = checkIsFileTextual;
+      if (local != null) {
+        return local;
       }
     }
 
-    return binExtList = getLiveParent().getBinExtList();
+    return checkIsFileTextual = getLiveParent().getCheckIsFileTextual();
   }
 
   private boolean isBinary() {
@@ -123,14 +124,7 @@ public class FileCopier {
         return false;
     }
 
-    String name = fromFile.getName().toLowerCase();
-    for (String ext : getBinExtList()) {
-      if (name.endsWith("." + ext)) {
-        return true;
-      }
-    }
-
-    return false;
+    return !getCheckIsFileTextual().test(fromFile);
   }
 
   public String getModifierExt() {

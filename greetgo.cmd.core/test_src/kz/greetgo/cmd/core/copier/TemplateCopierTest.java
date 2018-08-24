@@ -39,15 +39,23 @@ public class TemplateCopierTest {
   }
 
   private void file(String fileName, String text) throws IOException {
+    file(fileName, text.getBytes(UTF_8));
+  }
+
+  private void file(String fileName, byte[] bytes) throws IOException {
     Path path = fromDir.resolve(fileName);
     path.toFile().getParentFile().mkdirs();
-    Files.write(path, text.getBytes(UTF_8));
+    Files.write(path, bytes);
   }
 
   private Optional<String> to(String toFileName) throws IOException {
+    return toBytes(toFileName).map(bytes -> new String(bytes, UTF_8));
+  }
+
+  private Optional<byte[]> toBytes(String toFileName) throws IOException {
     File file = toDir.resolve(toFileName).toFile();
     if (!file.exists()) { return Optional.empty(); }
-    return Optional.of(new String(Files.readAllBytes(file.toPath()), UTF_8));
+    return Optional.of(Files.readAllBytes(file.toPath()));
   }
 
   @Test
@@ -104,6 +112,23 @@ public class TemplateCopierTest {
     assertThat(to("top_dir/dir/sub_dir/a_file.txt").isPresent()).isFalse();
     assertThat(to("top_dir/test_name-hi/sub_dir/a_file.txt").isPresent()).isTrue();
     assertThat(to("top_dir/test_name-hi/sub_dir/a_file.txt").get()).isEqualTo("hello");
+  }
+
+
+  @Test
+  public void copy_binaryCopy() throws Exception {
+
+    byte[] bytes = RND.byteArray(1000);
+
+    file("top_dir/dir/sub_dir/bin_file", bytes);
+
+    TemplateCopier.of()
+      .from(fromDir)
+      .to(toDir)
+      .copy()
+    ;
+
+    assertThat(toBytes("top_dir/dir/sub_dir/bin_file").get()).isEqualTo(bytes);
   }
 
 }

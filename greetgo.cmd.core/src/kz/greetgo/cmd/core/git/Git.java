@@ -29,5 +29,6 @@ public class Git {
 
   public static void checkout(Path gitPath, String branchName) {
     executeCommand(gitPath, "git", "checkout", "--force", branchName).ok();
+    executeCommand(gitPath, "git", "pull").ok();
   }
 }

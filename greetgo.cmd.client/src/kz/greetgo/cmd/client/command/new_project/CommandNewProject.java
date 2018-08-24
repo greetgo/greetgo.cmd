@@ -1,12 +1,12 @@
 package kz.greetgo.cmd.client.command.new_project;
 
 import kz.greetgo.cmd.client.command.new_sub.NewSubCommand;
-import kz.greetgo.cmd.core.util.StrUtil;
 import kz.greetgo.cmd.core.copier.TemplateCopier;
 import kz.greetgo.cmd.core.errors.SimpleExit;
 import kz.greetgo.cmd.core.git.Git;
 import kz.greetgo.cmd.core.util.AppUtil;
 import kz.greetgo.cmd.core.util.Locations;
+import kz.greetgo.cmd.core.util.StrUtil;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -139,6 +139,8 @@ public class CommandNewProject extends NewSubCommand {
   }
 
   private void executeCommand() {
+    System.out.println("an26gs start creating project...");
+
     Path gitPath = prepareTemplate();
 
     Set<String> variantSet = Git.listRemoteBranches(gitPath)
@@ -153,21 +155,29 @@ public class CommandNewProject extends NewSubCommand {
       throw new SimpleExit(1);
     }
 
+    System.out.println("an26gs checking out...");
+
     Git.checkout(gitPath, templateBranchName());
 
-    if (AppUtil.currentWorkingDir().resolve(projectName).toFile().exists()) {
+    File projectDir = AppUtil.currentWorkingDir().resolve(projectName).toFile();
+
+    if (projectDir.exists()) {
       System.err.println("Directory `" + projectName + "' already exists");
       throw new SimpleExit(1);
     }
 
-    if (AppUtil.currentWorkingDir().resolve(projectName).toFile().mkdir()) {
+    if (!projectDir.mkdir()) {
       System.err.println("Cannot create directory `" + projectName + "'");
       throw new SimpleExit(10);
     }
 
+    System.out.println("an26gs from = " + gitPath);
+    System.out.println("an26gs to   = " + AppUtil.currentWorkingDir().resolve(projectName));
+
     TemplateCopier.of()
       .from(gitPath)
       .to(AppUtil.currentWorkingDir().resolve(projectName))
+      .setVariable("PROJECT_NAME", projectName)
       .copy();
   }
 
