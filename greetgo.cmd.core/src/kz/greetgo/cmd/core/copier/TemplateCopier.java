@@ -37,7 +37,7 @@ public class TemplateCopier {
 
     root.base = to.toFile().getParentFile().toPath();
     root.toName = to.toFile().getName();
-    root.variableMap = paramMap;
+    root.variableMap = variableMap;
 
     root.fillChildren();
 
@@ -48,10 +48,10 @@ public class TemplateCopier {
     root.apply();
   }
 
-  private final Map<String, String> paramMap = new HashMap<>();
+  private final Map<String, String> variableMap = new HashMap<>();
 
-  public TemplateCopier param(String paramName, String paramValue) {
-    paramMap.put(paramName, paramValue);
+  public TemplateCopier setVariable(String varName, String varValue) {
+    variableMap.put(varName, varValue);
     return this;
   }
 }

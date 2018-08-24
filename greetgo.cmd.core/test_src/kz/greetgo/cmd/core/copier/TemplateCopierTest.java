@@ -97,7 +97,7 @@ public class TemplateCopierTest {
     TemplateCopier.of()
       .from(fromDir)
       .to(toDir)
-      .param("PROJECT_NAME", "test_name")
+      .setVariable("PROJECT_NAME", "test_name")
       .copy()
     ;
 
