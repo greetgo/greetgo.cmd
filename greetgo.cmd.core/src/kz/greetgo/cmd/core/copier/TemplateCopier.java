@@ -47,28 +47,35 @@ public class TemplateCopier {
   private boolean isFileTextual(File file) {
     String name = file.getName().toLowerCase();
 
-    return name.endsWith(".txt")
-      || name.endsWith(".xml")
+    //noinspection PointlessBooleanExpression
+    return false
       || name.endsWith(".java")
-      || name.endsWith(".gradle")
+      || name.endsWith(".js")
+      || name.endsWith(".ts")
       || name.endsWith(".sh")
       || name.endsWith(".bash")
       || name.endsWith(".bat")
-      || name.endsWith(".js")
+
+      || name.endsWith(".vue")
+
+      || name.endsWith(".gradle")
+      || name.endsWith(".txt")
+      || name.endsWith(".xml")
       || name.endsWith(".md")
       || name.endsWith(".json")
       || name.endsWith(".html")
-      || name.endsWith(".ts")
-      || name.endsWith(".vue")
-      || name.endsWith(".svg")
+
       || name.endsWith(".css")
       || name.endsWith(".scss")
       || name.endsWith(".sass")
       || name.endsWith(".less")
+
       || name.endsWith(".jsp")
       || name.endsWith(".jspx")
       || name.endsWith(".asp")
       || name.endsWith(".aspx")
+
+      || name.endsWith(".svg")
 
       || name.startsWith(".env.")
       || name.equals(".gitignore")
