@@ -18,6 +18,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class CmdUtil {
 
+  public static void outStd(CmdResult ok) {
+    System.out.println(String.join("\n", ok.stdOut));
+    System.err.println(String.join("\n", ok.stdErr));
+  }
+
   private enum ErrorType {
     OK, ERR_CODE, EXCEPTION;
   }

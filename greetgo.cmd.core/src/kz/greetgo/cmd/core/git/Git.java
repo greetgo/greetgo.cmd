@@ -1,12 +1,13 @@
 package kz.greetgo.cmd.core.git;
 
-import kz.greetgo.cmd.core.util.CmdResult;
+import kz.greetgo.cmd.core.util.CmdUtil;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static kz.greetgo.cmd.core.util.CmdUtil.executeCommand;
+import static kz.greetgo.cmd.core.util.CmdUtil.outStd;
 import static kz.greetgo.cmd.core.util.CmdUtil.runCommand;
 
 public class Git {
@@ -47,8 +48,7 @@ public class Git {
   }
 
   public static void pull(Path gitPath) {
-    CmdResult ok = executeCommand(gitPath, "git", "pull").ok();
-    System.out.println(String.join("\n", ok.stdOut));
-    System.err.println(String.join("\n", ok.stdErr));
+    outStd(executeCommand(gitPath, "git", "pull").ok());
   }
+
 }
