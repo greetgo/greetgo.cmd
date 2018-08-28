@@ -169,4 +169,27 @@ public class TemplateCopierTest {
       + "\n"
       + "It is test-project-name moon test-project-name world-moon\n");
   }
+
+
+  @Test
+  public void copy_makeTypeTxt() throws IOException {
+    file("dir/file.with.unknown.extension.modifier.txt", "bin-status=txt");
+    file("dir/file.with.unknown.extension", "\n"
+      + "\n"
+      + "///MODIFY replace saturn\\d+ {PROJECT_NAME}-name\n"
+      + "///MODIFY replace hello {ASD}\n"
+      + "It is saturn327 hello saturn11 world-hello\n");
+
+    TemplateCopier.of()
+      .from(fromDir)
+      .to(toDir)
+      .setVariable("PROJECT_NAME", "test-project")
+      .setVariable("ASD", "moon")
+      .copy()
+    ;
+
+    assertThat(to("dir/file.with.unknown.extension").get()).isEqualTo("\n"
+      + "\n"
+      + "It is test-project-name moon test-project-name world-moon\n");
+  }
 }

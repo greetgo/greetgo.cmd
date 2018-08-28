@@ -245,6 +245,11 @@ public class FileCopier {
           continue;
         }
 
+        if ("bin-status".equals(key)) {
+          binStatus = BinStatus.valueOf(value.toUpperCase());
+          continue;
+        }
+
         throw new RuntimeException("Unknown modifier parameter: " + key + " = " + value);
       }
 
