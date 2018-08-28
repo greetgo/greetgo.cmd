@@ -139,8 +139,6 @@ public class CommandNewProject extends NewSubCommand {
   }
 
   private void executeCommand() {
-    System.out.println("an26gs start creating project...");
-
     Path gitPath = prepareTemplate();
 
     Set<String> variantSet = Git.listRemoteBranches(gitPath)
@@ -154,8 +152,6 @@ public class CommandNewProject extends NewSubCommand {
       listVariants();
       throw new SimpleExit(1);
     }
-
-    System.out.println("an26gs checking out...");
 
     Git.checkout(gitPath, templateBranchName());
 
@@ -171,16 +167,17 @@ public class CommandNewProject extends NewSubCommand {
       throw new SimpleExit(10);
     }
 
-    System.out.println("an26gs from = " + gitPath);
-    System.out.println("an26gs to   = " + AppUtil.currentWorkingDir().resolve(projectName));
-
     TemplateCopier.of()
       .from(gitPath)
-      .to(AppUtil.currentWorkingDir().resolve(projectName))
+      .to(projectDir.toPath())
       .setVariable("PROJECT_NAME", projectName)
       .setVariable("PROJECT_CC_NAME", StrUtil.toCamelCase(projectName))
       .setVariable("RND_SALT", "\"" + StrUtil.generateSalt() + "\"")
       .copy();
+
+    Git.init(projectDir.toPath());
+    Git.addAll(projectDir.toPath());
+    Git.commit(projectDir.toPath(), "Created with greetgo-cli by " + System.getProperty("user.name"));
   }
 
   private static Path templatesDir() {

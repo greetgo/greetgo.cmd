@@ -8,6 +8,7 @@ public class CmdBuilder {
   List<CommandAbstract> commandList = new ArrayList<>();
 
   {
+    commandList.add(new CommandUpdate());
     commandList.add(new CommandNew());
     commandList.add(new CommandVersion());
   }

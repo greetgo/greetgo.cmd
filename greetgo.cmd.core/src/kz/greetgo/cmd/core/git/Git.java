@@ -1,5 +1,7 @@
 package kz.greetgo.cmd.core.git;
 
+import kz.greetgo.cmd.core.util.CmdResult;
+
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,5 +32,23 @@ public class Git {
   public static void checkout(Path gitPath, String branchName) {
     executeCommand(gitPath, "git", "checkout", "--force", branchName).ok();
     executeCommand(gitPath, "git", "pull").ok();
+  }
+
+  public static void init(Path gitPath) {
+    executeCommand(gitPath, "git", "init").ok();
+  }
+
+  public static void addAll(Path gitPath) {
+    executeCommand(gitPath, "git", "add", "*").ok();
+  }
+
+  public static void commit(Path gitPath, String commitMessage) {
+    executeCommand(gitPath, "git", "commit", "-a", "-m", commitMessage).ok();
+  }
+
+  public static void pull(Path gitPath) {
+    CmdResult ok = executeCommand(gitPath, "git", "pull").ok();
+    System.out.println(String.join("\n", ok.stdOut));
+    System.err.println(String.join("\n", ok.stdErr));
   }
 }
