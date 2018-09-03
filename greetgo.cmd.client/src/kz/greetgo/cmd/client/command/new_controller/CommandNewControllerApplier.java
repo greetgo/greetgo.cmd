@@ -3,6 +3,7 @@ package kz.greetgo.cmd.client.command.new_controller;
 import kz.greetgo.cmd.core.project.ClassRef;
 import kz.greetgo.cmd.core.project.ClassType;
 import kz.greetgo.cmd.core.project.Project;
+import kz.greetgo.cmd.core.util.Name;
 import kz.greetgo.depinject.core.Bean;
 import kz.greetgo.depinject.core.BeanGetter;
 import kz.greetgo.mvc.annotations.AsIs;
@@ -17,15 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static kz.greetgo.cmd.core.util.StrUtil.firstLower;
-import static kz.greetgo.cmd.core.util.StrUtil.toUnderscore;
 
 public class CommandNewControllerApplier {
+
   private final Project project;
-  private final String name;
+  private final Name name;
 
   public CommandNewControllerApplier(Project project, String name) {
     this.project = project;
-    this.name = name;
+    this.name = Name.parse(name);
   }
 
   private ClassRef controllerRef;
@@ -40,16 +41,16 @@ public class CommandNewControllerApplier {
 
 
   public void execute() {
-    controllerRef = project.getControllerPackageRef().createClassRef(name + "Controller");
-    registerRef = project.getRegisterInterfacePackageRef().createClassRef(name + "Register");
-    registerImplRef = project.getRegisterImplPackageRef().createClassRef(name + "RegisterImpl");
-    mybatisDaoRef = project.getMybatisDaoPackageRef().createClassRef(name + "Dao");
-    mybatisTestDaoRef = project.getMybatisTestDaoPackageRef().createClassRef(name + "TestDao");
+    controllerRef = project.getControllerPackageRef().createClassRef(name.appendToName( "Controller"));
+    registerRef = project.getRegisterInterfacePackageRef().createClassRef(name.appendToName("Register"));
+    registerImplRef = project.getRegisterImplPackageRef().createClassRef(name.appendToName("RegisterImpl"));
+    mybatisDaoRef = project.getMybatisDaoPackageRef().createClassRef(name.appendToName("Dao"));
+    mybatisTestDaoRef = project.getMybatisTestDaoPackageRef().createClassRef(name.appendToName("TestDao"));
 
     initDaoList(mybatisDaoDbRefList, mybatisDaoRef, "Dao");
     initDaoList(mybatisTestDaoDbRefList, mybatisTestDaoRef, "TestDao");
 
-    registerTestRef = project.getRegisterImplTestPackageRef().createClassRef(name + "RegisterImplTest");
+    registerTestRef = project.getRegisterImplTestPackageRef().createClassRef(name.appendToName("RegisterImplTest"));
 
     generateController();
     generateRegisterInterface();
@@ -73,14 +74,15 @@ public class CommandNewControllerApplier {
     for (String database : project.getMybatisDaoDatabases()) {
       daoList.add(
         topRef.inPackage.subPackage(database.toLowerCase())
-          .createClassRef(name + suffix + database)
+          .createClassRef(name.killSubPackage().renameTo(name.simpleName() + suffix + database))
       );
     }
   }
 
   private void generateController() {
     controllerRef.beforeClass.pr("@").cl(Bean.class).prn();
-    controllerRef.beforeClass.pr("@").cl(ControllerPrefix.class).prn("(\"/" + toUnderscore(name) + "\")");
+    controllerRef.beforeClass.pr("@").cl(ControllerPrefix.class)
+      .prn("(\"/" + name.slashesPackageAndNameWithMinuses() + "\")");
 
     {
       String controllerMarkerInterface = project.getControllerMarkerInterface();
@@ -89,7 +91,7 @@ public class CommandNewControllerApplier {
       }
     }
 
-    String registerVar = firstLower(name) + "Register";
+    String registerVar = firstLower(name.simpleName()) + "Register";
 
     controllerRef.content.prn(1);
     controllerRef.content.pr(1, "public ").cl(BeanGetter.class)
@@ -120,7 +122,7 @@ public class CommandNewControllerApplier {
 
     registerImplRef.content.prn(1);
 
-    String daoVar = firstLower(name) + "Dao";
+    String daoVar = firstLower(name.simpleName()) + "Dao";
 
     registerImplRef.content
       .pr(1, "public ").cl(BeanGetter.class).pr("<").cl(mybatisDaoRef.fullName()).prn("> " + daoVar + ";");
@@ -179,14 +181,14 @@ public class CommandNewControllerApplier {
 
     registerTestRef.content.prn();
 
-    String registerVar = firstLower(name) + "Register";
+    String registerVar = firstLower(name.simpleName()) + "Register";
 
     registerTestRef.content
       .pr(1, "public ").cl(BeanGetter.class).pr("<").cl(registerRef.fullName()).prn("> " + registerVar + ";");
 
     registerTestRef.content.prn();
 
-    String daoVar = firstLower(name) + "TestDao";
+    String daoVar = firstLower(name.simpleName()) + "TestDao";
 
     registerTestRef.content
       .pr(1, "public ").cl(BeanGetter.class).pr("<").cl(mybatisTestDaoRef.fullName()).prn("> " + daoVar + ";");

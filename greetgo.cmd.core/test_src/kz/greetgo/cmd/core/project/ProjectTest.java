@@ -1,5 +1,6 @@
 package kz.greetgo.cmd.core.project;
 
+import kz.greetgo.cmd.core.util.Name;
 import kz.greetgo.util.RND;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -75,7 +76,7 @@ public class ProjectTest {
 
     PackageRef controllerPackageRef = project.getControllerPackageRef();
 
-    ClassRef controllerRef = controllerPackageRef.createClassRef("AsdController");
+    ClassRef controllerRef = controllerPackageRef.createClassRef(Name.parse("AsdController"));
 
     controllerRef.save();
   }

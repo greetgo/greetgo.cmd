@@ -73,12 +73,75 @@ public class CommandNewControllerApplierTest {
 
     a.execute();
 
-    assertThat(1).isEqualTo(1);
+    ex("sandbox.controller/src/kz/greetgo/sandbox/controller/controller/HelloWorldController.java");
+    ex("sandbox.controller/src/kz/greetgo/sandbox/controller/register/HelloWorldRegister.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/impl/HelloWorldRegisterImpl.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/dao/HelloWorldDao.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/dao/postgres/HelloWorldDaoPostgres.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/dao/oracle/HelloWorldDaoOracle.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/dao/mysql/HelloWorldDaoMysql.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/dao/mssql/HelloWorldDaoMssql.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/dao/db2/HelloWorldDaoDb2.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/impl/HelloWorldRegisterImplTest.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/test/beans/dao/HelloWorldTestDao.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/test/beans/dao/postgres/HelloWorldTestDaoPostgres.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/test/beans/dao/oracle/HelloWorldTestDaoOracle.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/test/beans/dao/mysql/HelloWorldTestDaoMysql.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/test/beans/dao/mssql/HelloWorldTestDaoMssql.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/test/beans/dao/db2/HelloWorldTestDaoDb2.java");
+  }
+
+  private void ex(String fileSubPath) {
+    assertThat(rootProjectDir.resolve(fileSubPath).toFile())
+      .describedAs("MUST exists file:\n    file=" + fileSubPath + ",\n    rootProjectDir = " + rootProjectDir + "\n")
+      .exists();
+  }
+
+
+  @Test
+  public void execute_subPackage() throws Exception {
+    projectParam(PROJECT_NAME_TXT, projectName);
+    projectParam(CONTROLLER_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller/controller");
+    projectParam(REGISTER_INTERFACE_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller/register");
+    projectParam(CONTROLLER_MARKER_INTERFACE_TXT, TestControllerMarker.class.getName());
+    projectParam(REGISTER_IMPL_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/impl");
+    projectParam(MYBATIS_DAO_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/dao");
+    projectParam(MYBATIS_DAO_DATABASES_TXT, "Postgres\nOracle\nMysql\nMssql\nDb2");
+    projectParam(REGISTER_IMPL_TEST_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/impl");
+    projectParam(REGISTER_IMPL_TEST_BEFORE_CLASS_TXT, "@~kz.greetgo.depinject.testng.ContainerConfig~" +
+      "(~kz.greetgo.sandbox.register.test.util.BeanConfigTests~.class)\n" +
+      "@~java.lang.SuppressWarnings~(\"asd\")\n");
+    projectParam(REGISTER_IMPL_TEST_EXTENDS_TXT, "kz.greetgo.super_pup_er.TestParent");
+
+    projectParam(MYBATIS_TEST_DAO_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/test/beans/dao");
+
+    Project project = Project.openProject(rootProjectDir);
+
+    CommandNewControllerApplier a = new CommandNewControllerApplier(project, "some.sub.pack.HelloWorld");
+
+    a.execute();
+
+    ex("sandbox.controller/src/kz/greetgo/sandbox/controller/controller/some/sub/pack/HelloWorldController.java");
+    ex("sandbox.controller/src/kz/greetgo/sandbox/controller/register/some/sub/pack/HelloWorldRegister.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/impl/some/sub/pack/HelloWorldRegisterImpl.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/dao/some/sub/pack/HelloWorldDao.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/dao/some/sub/pack/postgres/HelloWorldDaoPostgres.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/dao/some/sub/pack/oracle/HelloWorldDaoOracle.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/dao/some/sub/pack/mysql/HelloWorldDaoMysql.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/dao/some/sub/pack/mssql/HelloWorldDaoMssql.java");
+    ex("sandbox.register/src/kz/greetgo/sandbox/register/dao/some/sub/pack/db2/HelloWorldDaoDb2.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/impl/some/sub/pack/HelloWorldRegisterImplTest.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/test/beans/dao/some/sub/pack/HelloWorldTestDao.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/test/beans/dao/some/sub/pack/postgres/HelloWorldTestDaoPostgres.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/test/beans/dao/some/sub/pack/oracle/HelloWorldTestDaoOracle.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/test/beans/dao/some/sub/pack/mysql/HelloWorldTestDaoMysql.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/test/beans/dao/some/sub/pack/mssql/HelloWorldTestDaoMssql.java");
+    ex("sandbox.register/test_src/kz/greetgo/sandbox/register/test/beans/dao/some/sub/pack/db2/HelloWorldTestDaoDb2.java");
   }
 
   @Test(expectedExceptions = No_CONTROLLER_PACKAGE_TXT.class)
   public void execute_no_CONTROLLER_PACKAGE_TXT() throws Exception {
-//    projectParam(CONTROLLER_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller/controller");
+    //    projectParam(CONTROLLER_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller/controller");
     projectParam(REGISTER_INTERFACE_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller/register");
     projectParam(CONTROLLER_MARKER_INTERFACE_TXT, TestControllerMarker.class.getName());
     projectParam(REGISTER_IMPL_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/impl");
@@ -102,7 +165,7 @@ public class CommandNewControllerApplierTest {
   @Test(expectedExceptions = No_REGISTER_INTERFACE_PACKAGE_TXT.class)
   public void execute_no_REGISTER_INTERFACE_PACKAGE_TXT() throws Exception {
     projectParam(CONTROLLER_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller/controller");
-//    projectParam(REGISTER_INTERFACE_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller/register");
+    //    projectParam(REGISTER_INTERFACE_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller/register");
     projectParam(CONTROLLER_MARKER_INTERFACE_TXT, TestControllerMarker.class.getName());
     projectParam(REGISTER_IMPL_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/impl");
     projectParam(MYBATIS_DAO_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/dao");
@@ -126,7 +189,7 @@ public class CommandNewControllerApplierTest {
   public void execute_no_CONTROLLER_MARKER_INTERFACE_TXT() throws Exception {
     projectParam(CONTROLLER_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller/controller");
     projectParam(REGISTER_INTERFACE_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller/register");
-//    projectParam(CONTROLLER_MARKER_INTERFACE_TXT, TestControllerMarker.class.getName());
+    //    projectParam(CONTROLLER_MARKER_INTERFACE_TXT, TestControllerMarker.class.getName());
     projectParam(REGISTER_IMPL_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/impl");
     projectParam(MYBATIS_DAO_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/dao");
     projectParam(MYBATIS_DAO_DATABASES_TXT, "Postgres\nOracle\nMysql\nMssql\nDb2");
@@ -150,7 +213,7 @@ public class CommandNewControllerApplierTest {
     projectParam(CONTROLLER_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller/controller");
     projectParam(REGISTER_INTERFACE_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller/register");
     projectParam(CONTROLLER_MARKER_INTERFACE_TXT, TestControllerMarker.class.getName());
-//    projectParam(REGISTER_IMPL_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/impl");
+    //    projectParam(REGISTER_IMPL_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/impl");
     projectParam(MYBATIS_DAO_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/dao");
     projectParam(MYBATIS_DAO_DATABASES_TXT, "Postgres\nOracle\nMysql\nMssql\nDb2");
     projectParam(REGISTER_IMPL_TEST_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/impl");
@@ -174,7 +237,7 @@ public class CommandNewControllerApplierTest {
     projectParam(REGISTER_INTERFACE_PACKAGE_TXT, "sandbox.controller/src kz/greetgo/sandbox/controller/register");
     projectParam(CONTROLLER_MARKER_INTERFACE_TXT, TestControllerMarker.class.getName());
     projectParam(REGISTER_IMPL_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/impl");
-//    projectParam(MYBATIS_DAO_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/dao");
+    //    projectParam(MYBATIS_DAO_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/dao");
     projectParam(MYBATIS_DAO_DATABASES_TXT, "Postgres\nOracle\nMysql\nMssql\nDb2");
     projectParam(REGISTER_IMPL_TEST_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/impl");
     projectParam(REGISTER_IMPL_TEST_BEFORE_CLASS_TXT, "@~kz.greetgo.depinject.testng.ContainerConfig~" +
@@ -198,7 +261,7 @@ public class CommandNewControllerApplierTest {
     projectParam(CONTROLLER_MARKER_INTERFACE_TXT, TestControllerMarker.class.getName());
     projectParam(REGISTER_IMPL_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/impl");
     projectParam(MYBATIS_DAO_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/dao");
-//    projectParam(MYBATIS_DAO_DATABASES_TXT, "Postgres\nOracle\nMysql\nMssql\nDb2");
+    //    projectParam(MYBATIS_DAO_DATABASES_TXT, "Postgres\nOracle\nMysql\nMssql\nDb2");
     projectParam(REGISTER_IMPL_TEST_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/impl");
     projectParam(REGISTER_IMPL_TEST_BEFORE_CLASS_TXT, "@~kz.greetgo.depinject.testng.ContainerConfig~" +
       "(~kz.greetgo.sandbox.register.test.util.BeanConfigTests~.class)\n" +
@@ -222,7 +285,7 @@ public class CommandNewControllerApplierTest {
     projectParam(REGISTER_IMPL_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/impl");
     projectParam(MYBATIS_DAO_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/dao");
     projectParam(MYBATIS_DAO_DATABASES_TXT, "Postgres\nOracle\nMysql\nMssql\nDb2");
-//    projectParam(REGISTER_IMPL_TEST_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/impl");
+    //    projectParam(REGISTER_IMPL_TEST_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/impl");
     projectParam(REGISTER_IMPL_TEST_BEFORE_CLASS_TXT, "@~kz.greetgo.depinject.testng.ContainerConfig~" +
       "(~kz.greetgo.sandbox.register.test.util.BeanConfigTests~.class)\n" +
       "@~java.lang.SuppressWarnings~(\"asd\")\n");
@@ -246,9 +309,9 @@ public class CommandNewControllerApplierTest {
     projectParam(MYBATIS_DAO_PACKAGE_TXT, "sandbox.register/src kz/greetgo/sandbox/register/dao");
     projectParam(MYBATIS_DAO_DATABASES_TXT, "Postgres\nOracle\nMysql\nMssql\nDb2");
     projectParam(REGISTER_IMPL_TEST_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/impl");
-//    projectParam(REGISTER_IMPL_TEST_BEFORE_CLASS_TXT, "@~kz.greetgo.depinject.testng.ContainerConfig~" +
-//      "(~kz.greetgo.sandbox.register.test.util.BeanConfigTests~.class)\n" +
-//      "@~java.lang.SuppressWarnings~(\"asd\")\n");
+    //    projectParam(REGISTER_IMPL_TEST_BEFORE_CLASS_TXT, "@~kz.greetgo.depinject.testng.ContainerConfig~" +
+    //      "(~kz.greetgo.sandbox.register.test.util.BeanConfigTests~.class)\n" +
+    //      "@~java.lang.SuppressWarnings~(\"asd\")\n");
     projectParam(REGISTER_IMPL_TEST_EXTENDS_TXT, "kz.greetgo.super_pup_er.TestParent");
 
     projectParam(MYBATIS_TEST_DAO_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/test/beans/dao");
@@ -272,7 +335,7 @@ public class CommandNewControllerApplierTest {
     projectParam(REGISTER_IMPL_TEST_BEFORE_CLASS_TXT, "@~kz.greetgo.depinject.testng.ContainerConfig~" +
       "(~kz.greetgo.sandbox.register.test.util.BeanConfigTests~.class)\n" +
       "@~java.lang.SuppressWarnings~(\"asd\")\n");
-//    projectParam(REGISTER_IMPL_TEST_EXTENDS_TXT, "kz.greetgo.super_pup_er.TestParent");
+    //    projectParam(REGISTER_IMPL_TEST_EXTENDS_TXT, "kz.greetgo.super_pup_er.TestParent");
 
     projectParam(MYBATIS_TEST_DAO_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/test/beans/dao");
 
@@ -296,7 +359,7 @@ public class CommandNewControllerApplierTest {
       "(~kz.greetgo.sandbox.register.test.util.BeanConfigTests~.class)\n" +
       "@~java.lang.SuppressWarnings~(\"asd\")\n");
     projectParam(REGISTER_IMPL_TEST_EXTENDS_TXT, "kz.greetgo.super_pup_er.TestParent");
-//    projectParam(MYBATIS_TEST_DAO_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/test/beans/dao");
+    //    projectParam(MYBATIS_TEST_DAO_PACKAGE_TXT, "sandbox.register/test_src kz/greetgo/sandbox/register/test/beans/dao");
 
     Project project = Project.openProject(rootProjectDir);
 

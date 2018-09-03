@@ -1,5 +1,7 @@
 package kz.greetgo.cmd.core.project;
 
+import kz.greetgo.cmd.core.util.Name;
+
 import java.nio.file.Path;
 
 import static kz.greetgo.cmd.core.util.PathUtil.toPoints;
@@ -25,7 +27,14 @@ public class PackageRef {
     return new PackageRef(root, sourcePath, packagePath);
   }
 
-  public ClassRef createClassRef(String name) {
-    return new ClassRef(this, name);
+  public ClassRef createClassRef(Name name) {
+    return new ClassRef(subPackage(name), name.simpleName());
+  }
+
+  public PackageRef subPackage(Name name) {
+    if (name.subPackageName().isPresent()) {
+      return subPackage(name.subPackageName().get());
+    }
+    return this;
   }
 }
