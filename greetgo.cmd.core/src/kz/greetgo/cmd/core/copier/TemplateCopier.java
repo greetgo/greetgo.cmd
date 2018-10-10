@@ -50,6 +50,7 @@ public class TemplateCopier {
     //noinspection PointlessBooleanExpression
     return false
       || name.endsWith(".java")
+      || name.endsWith(".kt")
       || name.endsWith(".js")
       || name.endsWith(".ts")
       || name.endsWith(".sh")
