@@ -77,8 +77,10 @@ public class CommandUpdate extends CommandAbstract {
       return;
     }
 
-    System.err.println("*** There is new version " + remoteVersion + " ***");
-    System.err.println("To upgrade enter command:");
+    System.err.println("***");
+    System.err.println("*** There is a new version " + remoteVersion + " ***");
+    System.err.println("***");
+    System.err.println("  To upgrade enter command:");
     System.err.println(usedCommand + " " + name());
   }
 }
