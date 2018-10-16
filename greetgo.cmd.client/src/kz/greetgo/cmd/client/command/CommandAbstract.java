@@ -7,6 +7,7 @@ public abstract class CommandAbstract implements Command {
   private final String name = CommandUtil.calcName(getClass());
 
   String usedCommand = "greetgo";
+
   LocalParams localParams = null;
 
   @Override

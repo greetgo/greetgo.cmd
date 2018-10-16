@@ -12,6 +12,6 @@ public class LocalParamsImpl implements LocalParams {
 
   @Override
   public DateAcceptor lastUpdateCheckedAt() {
-    return null;
+    return new DateAcceptorInFile(lastUpdateCheckedAtFile, "yyyy-MM-dd HH:mm:ss");
   }
 }
