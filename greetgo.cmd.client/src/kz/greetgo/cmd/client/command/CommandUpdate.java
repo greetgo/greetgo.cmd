@@ -3,6 +3,7 @@ package kz.greetgo.cmd.client.command;
 import kz.greetgo.cmd.core.errors.SimpleExit;
 import kz.greetgo.cmd.core.git.Git;
 import kz.greetgo.cmd.core.util.AppUtil;
+import kz.greetgo.util.RND;
 import kz.greetgo.util.ServerUtil;
 
 import java.io.InputStream;
@@ -56,7 +57,7 @@ public class CommandUpdate extends CommandAbstract {
   private static String getRemoteVersion() {
     try {
 
-      URL url = new URL("https://raw.githubusercontent.com/greetgo/greetgo.cmd/master/version.txt");
+      URL url = new URL("https://raw.githubusercontent.com/greetgo/greetgo.cmd/master/version.txt?x=" + RND.intStr(10));
       URLConnection connection = url.openConnection();
       try (InputStream inputStream = connection.getInputStream()) {
         return ServerUtil.streamToStr(inputStream);
@@ -80,7 +81,5 @@ public class CommandUpdate extends CommandAbstract {
     System.err.println("***");
     System.err.println("*** There is a new version " + remoteVersion + " ***");
     System.err.println("***");
-    System.err.println("  To upgrade enter command:");
-    System.err.println(usedCommand + " " + name());
   }
 }
