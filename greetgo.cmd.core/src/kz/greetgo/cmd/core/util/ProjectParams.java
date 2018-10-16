@@ -23,14 +23,20 @@ public class ProjectParams {
   public static final String MYBATIS_TEST_DAO_PACKAGE_TXT = "mybatis-test-dao-package.txt";
 
   public static ReadResult<String> readValue(Path pathToFile) {
-    if (!pathToFile.toFile().exists()) return ReadResult.ofFileAbsent();
+    if (!pathToFile.toFile().exists()) {
+      return ReadResult.ofFileAbsent();
+    }
     try {
       List<String> stringList = Files.readAllLines(pathToFile);
 
       for (String line : stringList) {
         String trimmedLine = line.trim();
-        if (trimmedLine.length() == 0) continue;
-        if (trimmedLine.startsWith("#")) continue;
+        if (trimmedLine.length() == 0) {
+          continue;
+        }
+        if (trimmedLine.startsWith("#")) {
+          continue;
+        }
         return ReadResult.of(trimmedLine);
       }
 
@@ -41,15 +47,21 @@ public class ProjectParams {
   }
 
   public static ReadResult<List<String>> readLines(Path pathToFile) {
-    if (!pathToFile.toFile().exists()) return ReadResult.ofFileAbsent();
+    if (!pathToFile.toFile().exists()) {
+      return ReadResult.ofFileAbsent();
+    }
     try {
       List<String> stringList = Files.readAllLines(pathToFile);
       List<String> ret = new ArrayList<>();
 
       for (String line : stringList) {
         String trimmedLine = line.trim();
-        if (trimmedLine.length() == 0) continue;
-        if (trimmedLine.startsWith("#")) continue;
+        if (trimmedLine.length() == 0) {
+          continue;
+        }
+        if (trimmedLine.startsWith("#")) {
+          continue;
+        }
         ret.add(trimmedLine);
       }
 

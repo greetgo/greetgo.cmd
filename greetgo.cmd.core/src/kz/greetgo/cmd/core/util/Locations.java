@@ -16,4 +16,8 @@ public class Locations {
   public static Path logs() {
     return local().resolve("logs");
   }
+
+  public static Path lastUpdateCheckedAtFile() {
+    return local().resolve("params").resolve("last_update_checked_at");
+  }
 }

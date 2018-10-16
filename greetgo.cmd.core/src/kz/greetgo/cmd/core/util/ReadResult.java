@@ -49,22 +49,32 @@ public class ReadResult<ValueType> {
   }
 
   public ValueType get() {
-    if (isValueAbsent()) throw new RuntimeException(type == ResultType.NO_FILE ? "No file" : "No value");
+    if (isValueAbsent()) {
+      throw new RuntimeException(type == ResultType.NO_FILE ? "No file" : "No value");
+    }
     return value;
   }
 
   public ValueType getOr(ValueType defaultValue) {
-    if (isValueAbsent()) return defaultValue;
+    if (isValueAbsent()) {
+      return defaultValue;
+    }
     return value;
   }
 
+  @SuppressWarnings("unused")
   public ValueType getOrThrow(RuntimeException e) {
-    if (isValueAbsent()) throw e;
+    if (isValueAbsent()) {
+      throw e;
+    }
     return value;
   }
 
+  @SuppressWarnings("unused")
   public ValueType getOrThrow(Exception e) throws Exception {
-    if (isValueAbsent()) throw e;
+    if (isValueAbsent()) {
+      throw e;
+    }
     return value;
   }
 

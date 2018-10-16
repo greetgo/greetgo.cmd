@@ -2,12 +2,21 @@ package kz.greetgo.cmd.client.launcher;
 
 import kz.greetgo.cmd.client.command.CmdBuilder;
 import kz.greetgo.cmd.client.command.Command;
+import kz.greetgo.cmd.client.command.CommandUpdate;
 import kz.greetgo.cmd.core.errors.SimpleExit;
+import kz.greetgo.cmd.core.local_params.LocalParams;
+import kz.greetgo.cmd.core.local_params.LocalParamsImpl;
 import kz.greetgo.cmd.core.util.AppUtil;
+import kz.greetgo.cmd.core.util.Locations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+
+import static kz.greetgo.cmd.client.command.CmdBuilder.newCmdBuilder;
 
 public class Launcher {
   public static void main(String[] args) {
@@ -28,8 +37,13 @@ public class Launcher {
   }
 
   private void exec(String[] args) {
+    LocalParams localParams = getLocalParams();
     String cmd = AppUtil.usedCommand();
-    CmdBuilder cmdBuilder = CmdBuilder.newCmdBuilder().setUsedCommand(cmd);
+    CmdBuilder cmdBuilder = newCmdBuilder()
+        .setUsedCommand(cmd)
+        .setLocalParams(localParams);
+
+    cmdBuilder.commandOf(CommandUpdate.class).checkNeedUpdate();
 
     if (args.length == 0) {
       usage(cmd, cmdBuilder);
@@ -51,6 +65,10 @@ public class Launcher {
 
     usage(cmd, cmdBuilder);
     throw new SimpleExit(1);
+  }
+
+  private LocalParams getLocalParams() {
+    return new LocalParamsImpl(Locations.lastUpdateCheckedAtFile());
   }
 
   private void usage(String cmd, CmdBuilder cmdBuilder) {

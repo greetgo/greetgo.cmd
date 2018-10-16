@@ -29,8 +29,8 @@ public class PathUtil {
 
   public static String toPoints(String packagePath) {
     while (packagePath.startsWith("/")
-      || packagePath.startsWith("\\")
-      || packagePath.startsWith(".")
+        || packagePath.startsWith("\\")
+        || packagePath.startsWith(".")
     ) {
       packagePath = packagePath.substring(1);
     }

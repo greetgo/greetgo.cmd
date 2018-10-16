@@ -52,13 +52,13 @@ public class CmdUtil {
       currentDir.toFile().mkdirs();
 
       exitCode = new ProcessBuilder()
-        .command(cmd)
-        .directory(currentDir.toFile())
-        .redirectInput(ProcessBuilder.Redirect.INHERIT)
-        .redirectOutput(stdOutTmpFile)
-        .redirectError(stdErrTmpFile)
-        .start()
-        .waitFor();
+          .command(cmd)
+          .directory(currentDir.toFile())
+          .redirectInput(ProcessBuilder.Redirect.INHERIT)
+          .redirectOutput(stdOutTmpFile)
+          .redirectError(stdErrTmpFile)
+          .start()
+          .waitFor();
 
       if (exitCode != 0) {
         errorType = ErrorType.ERR_CODE;
@@ -86,9 +86,9 @@ public class CmdUtil {
     }
 
     logCmdExecute(String.join(" ", cmd), exitCode,
-      startedAtDate, delayNanos,
-      errorType, errors,
-      stdOut, stdErr);
+        startedAtDate, delayNanos,
+        errorType, errors,
+        stdOut, stdErr);
 
     stdOutTmpFile.delete();
     stdErrTmpFile.delete();

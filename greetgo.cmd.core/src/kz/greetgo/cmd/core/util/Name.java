@@ -62,9 +62,15 @@ public class Name {
   }
 
   private static String resolvePackages(String packageName1, String packageName2) {
-    if (packageName1 == null && packageName2 == null) { return null; }
-    if (packageName1 == null) { return packageName2; }
-    if (packageName2 == null) { return packageName1; }
+    if (packageName1 == null && packageName2 == null) {
+      return null;
+    }
+    if (packageName1 == null) {
+      return packageName2;
+    }
+    if (packageName2 == null) {
+      return packageName1;
+    }
     return packageName1 + '.' + packageName2;
   }
 

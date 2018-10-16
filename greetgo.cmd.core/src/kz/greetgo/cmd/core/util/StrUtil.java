@@ -87,17 +87,17 @@ public class StrUtil {
     value = value.trim().toLowerCase();
 
     return "true".equals(value)
-      || "t".equals(value)
-      || "да".equals(value)
-      || "д".equals(value)
-      || "истина".equals(value)
-      || "и".equals(value)
-      || "真相".equals(value)
-      || "是的".equals(value)
-      || "on".equals(value)
-      || "yes".equals(value)
-      || "y".equals(value)
-      || "1".equals(value);
+        || "t".equals(value)
+        || "да".equals(value)
+        || "д".equals(value)
+        || "истина".equals(value)
+        || "и".equals(value)
+        || "真相".equals(value)
+        || "是的".equals(value)
+        || "on".equals(value)
+        || "yes".equals(value)
+        || "y".equals(value)
+        || "1".equals(value);
   }
 
   public static List<String> splitOnLines(String str) {
@@ -116,13 +116,13 @@ public class StrUtil {
       return "";
     }
     return Arrays.stream(str.toLowerCase()
-      .replace('-', ' ')
-      .replace('_', ' ')
-      .trim()
-      .split("\\s+"))
-      .map(StrUtil::firstUpper)
-      .collect(Collectors.joining())
-      ;
+        .replace('-', ' ')
+        .replace('_', ' ')
+        .trim()
+        .split("\\s+"))
+        .map(StrUtil::firstUpper)
+        .collect(Collectors.joining())
+        ;
   }
 
   private static final String ENG = "abcdefghijklmnopqrstuvwxyz";
