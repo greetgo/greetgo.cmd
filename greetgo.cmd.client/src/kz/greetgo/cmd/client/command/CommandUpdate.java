@@ -6,6 +6,7 @@ import kz.greetgo.cmd.core.util.AppUtil;
 import kz.greetgo.util.RND;
 import kz.greetgo.util.ServerUtil;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URL;
@@ -34,7 +35,7 @@ public class CommandUpdate extends CommandAbstract {
   }
 
   public void checkNeedUpdate() {
-    if (needToUpdate() || true) {
+    if (needToUpdate()) {
       checkToUpdate();
       localParams.lastUpdateCheckedAt().set(new Date());
     }
@@ -49,7 +50,7 @@ public class CommandUpdate extends CommandAbstract {
     {
       Calendar calendar = new GregorianCalendar();
       calendar.setTime(lastCheckedAt);
-      calendar.add(Calendar.MINUTE, 15);
+      calendar.add(Calendar.SECOND, 60 + 30);
       return new Date().after(calendar.getTime());
     }
   }
@@ -63,15 +64,18 @@ public class CommandUpdate extends CommandAbstract {
         return ServerUtil.streamToStr(inputStream);
       }
 
-    } catch (RuntimeException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+    } catch (IOException e) {
+      return null;
     }
   }
 
   private void checkToUpdate() {
     String remoteVersion = getRemoteVersion();
+
+    if (remoteVersion == null) {
+      return;
+    }
+
     String version = AppUtil.version();
 
     if (Objects.equals(remoteVersion, version)) {
