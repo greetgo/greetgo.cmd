@@ -19,21 +19,25 @@ import java.util.stream.Collectors;
 
 public class CommandNewProject extends NewSubCommand {
 
-  private final LinkedHashMap<String, ProjectTemplate> templateMap = new LinkedHashMap<>();
+  private final LinkedHashMap<String, ProjectTemplate> templateGroupMap = new LinkedHashMap<>();
 
   {
-    addTemplate("depinject-vue-vuex", "https://github.com/greetgo/greetgo.templates.git", "Server based on depinject.\nClient - one page, used VueJS with vuex (vuex-typex)");
-    addTemplate("depinject-angular", "https://github.com/greetgo/greetgo.templates.git", "Server based on depinject.\nClient - one page, used angular");
+//    addTemplate("depinject-vue-vuex", "https://github.com/greetgo/greetgo.templates.git", "Server based on depinject.\nClient - one page, used VueJS with vuex (vuex-typex)");
+//    addTemplate("depinject-angular", "https://github.com/greetgo/greetgo.templates.git", "Server based on depinject.\nClient - one page, used angular");
+    addTemplateGroup("greetgo.templates",
+        "https://github.com/greetgo/greetgo.templates.git",
+        "Common greetgo project templates");
   }
 
   private String projectName = "a-project-name";
-  private String templateName = null;
-  private String templateVariant = null;
+
+  private String templateGroup = null;
+  private String templateName1 = null;
 
   @SuppressWarnings("SameParameterValue")
-  private void addTemplate(String name, String gitUrl, String description) {
+  private void addTemplateGroup(String name, String gitUrl, String description) {
     ProjectTemplate t = ProjectTemplate.of(name, gitUrl, description);
-    templateMap.put(t.name, t);
+    templateGroupMap.put(t.name, t);
   }
 
   @Override
@@ -49,19 +53,19 @@ public class CommandNewProject extends NewSubCommand {
       throw new SimpleExit(1);
     }
 
-    templateName = subList.get(1);
+    templateGroup = subList.get(1);
 
-    if (!templateMap.containsKey(templateName)) {
-      unknownTemplate();
+    if (!templateGroupMap.containsKey(templateGroup)) {
+      unknownTemplateGroup();
       throw new SimpleExit(1);
     }
 
     if (subList.size() == 2) {
-      listVariants();
+      listTemplatesInGroup();
       throw new SimpleExit(1);
     }
 
-    templateVariant = subList.get(2);
+    templateName1 = subList.get(2);
 
     if (subList.size() == 3) {
       executeCommand();
@@ -74,8 +78,8 @@ public class CommandNewProject extends NewSubCommand {
     throw new SimpleExit(1);
   }
 
-  private void unknownTemplate() {
-    System.err.println("Unknown template `" + templateName + "'. Usage:\n");
+  private void unknownTemplateGroup() {
+    System.err.println("Unknown template group `" + templateGroup + "'. Usage:\n");
     usage();
   }
 
@@ -100,16 +104,16 @@ public class CommandNewProject extends NewSubCommand {
 
   @Override
   public void printUsage() {
-    System.err.println("  " + cmdPrefix + " [project | p] <ProjectName> <TemplateName> <Variant>");
+    System.err.println("  " + cmdPrefix + " [project | p] <ProjectName> <TemplateGroup> <TemplateName>");
     System.err.println("      ");
-    System.err.println("      Creates new project with name <ProjectName> based on template <TemplateName> with variant <Variant>");
+    System.err.println("      Creates new project with name <ProjectName> based on template <TemplateName>");
     System.err.println("      ");
-    System.err.println("      You can use following templates:");
+    System.err.println("      You can use the following template groups:");
 
     String prefixSpace = StrUtil.spaces(8);
 
-    int maxNameLength = templateMap.values().stream().mapToInt(s -> s.name.length()).max().orElse(1);
-    String nameHeader = "<TemplateName>";
+    int maxNameLength = templateGroupMap.values().stream().mapToInt(s -> s.name.length()).max().orElse(1);
+    String nameHeader = "<TemplateGroup>";
     if (maxNameLength < nameHeader.length()) {
       maxNameLength = nameHeader.length();
     }
@@ -120,7 +124,7 @@ public class CommandNewProject extends NewSubCommand {
       System.err.println(name + "<Description>");
     }
 
-    for (ProjectTemplate pt : templateMap.values()) {
+    for (ProjectTemplate pt : templateGroupMap.values()) {
 
       String name = prefixSpace + toLenRight(pt.name, maxNameLength) + " - ";
       String space = StrUtil.spaces(name.length());
@@ -131,25 +135,27 @@ public class CommandNewProject extends NewSubCommand {
     }
     System.err.println(prefixSpace);
 
-    System.err.println("      Note to view list of variants type: '" + cmdPrefix + " project <AnyName> <TemplateName>'");
-    for (ProjectTemplate pt : templateMap.values()) {
+    System.err.println("      Use the following commands:");
+    System.err.println();
+    for (ProjectTemplate pt : templateGroupMap.values()) {
       System.err.println(//"        " +
           cmdPrefix + " project " + projectName + " " + pt.name);
     }
+    System.err.println();
   }
 
   private void executeCommand() {
-    Path gitPath = prepareTemplate();
+    Path gitPath = prepareTemplateGroup();
 
-    Set<String> variantSet = Git.listRemoteBranches(gitPath)
+    Set<String> templateNameSet = Git.listRemoteBranches(gitPath)
         .stream()
-        .map(this::extractVariant)
+        .map(this::extractTemplateName)
         .filter(Objects::nonNull)
         .collect(Collectors.toSet());
 
-    if (!variantSet.contains(templateVariant)) {
-      System.err.println("Unknown variant `" + templateVariant + "'.");
-      listVariants();
+    if (!templateNameSet.contains(templateName1)) {
+      System.err.println("Unknown variant `" + templateName1 + "'.");
+      listTemplatesInGroup();
       throw new SimpleExit(1);
     }
 
@@ -181,45 +187,49 @@ public class CommandNewProject extends NewSubCommand {
   }
 
   private static Path templatesDir() {
-    return Locations.localNewProject().resolve("templates-001");
+    return Locations.localNewProject().resolve("templates-002");
   }
 
   private Path gitRepoPath(String templateName) {
     return templatesDir().resolve(templateName).resolve("git-repo");
   }
 
-  private String extractVariant(String branchName) {
-    if (!branchName.startsWith("t-" + templateName + "-")) { return null; }
-    return branchName.substring(templateName.length() + 3);
+  private String extractTemplateName(String branchName) {
+    if (!branchName.startsWith("t-")) {
+      return null;
+    }
+    return branchName.substring(2);
   }
 
   private String templateBranchName() {
-    return "t-" + templateName + "-" + templateVariant;
+    return "t-" + templateName1;
   }
 
-  private void listVariants() {
-    System.err.println("You an use following variants:\n");
-    String cmd = cmdPrefix + " project " + projectName + ' ' + templateName + ' ';
-    System.err.println("list variants of: " + cmd);
+  private void listTemplatesInGroup() {
+    System.err.println("You an use following templates:\n");
+    String cmd = cmdPrefix + " project " + projectName + ' ' + templateGroup + ' ';
+    System.err.println("list templates in group: " + templateGroup);
+    System.err.println();
 
-    Path gitPath = prepareTemplate();
+    Path gitPath = prepareTemplateGroup();
 
     Git.listRemoteBranches(gitPath)
         .stream()
-        .map(this::extractVariant)
+        .map(this::extractTemplateName)
         .filter(Objects::nonNull)
-        .forEachOrdered(variant -> System.err.println(cmd + variant));
+        .forEachOrdered(tName -> System.err.println(cmd + tName));
 
+    System.err.println();
   }
 
-  private Path prepareTemplate() {
-    ProjectTemplate projectTemplate = templateMap.get(templateName);
+  private Path prepareTemplateGroup() {
+    ProjectTemplate projectTemplate = templateGroupMap.get(templateGroup);
     if (projectTemplate == null) {
-      unknownTemplate();
+      unknownTemplateGroup();
       throw new SimpleExit(1);
     }
 
-    Path gitPath = gitRepoPath(templateName);
+    Path gitPath = gitRepoPath(templateGroup);
 
     if (gitPath.toFile().isDirectory()) {
       Git.fetchAllBranches(gitPath);
