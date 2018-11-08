@@ -22,8 +22,8 @@ public class CommandNewProject extends NewSubCommand {
   private final LinkedHashMap<String, ProjectTemplate> templateMap = new LinkedHashMap<>();
 
   {
-    addTemplate("depinject-vue-vuex", "https://github.com/greetgo/greetgo.sandbox.git", "Server based on depinject.\nClient - one page, used VueJS with vuex (vuex-typex)");
-    addTemplate("depinject-angular", "https://github.com/greetgo/greetgo.sandbox.git", "Server based on depinject.\nClient - one page, used angular");
+    addTemplate("depinject-vue-vuex", "https://github.com/greetgo/greetgo.templates.git", "Server based on depinject.\nClient - one page, used VueJS with vuex (vuex-typex)");
+    addTemplate("depinject-angular", "https://github.com/greetgo/greetgo.templates.git", "Server based on depinject.\nClient - one page, used angular");
   }
 
   private String projectName = "a-project-name";
@@ -134,7 +134,7 @@ public class CommandNewProject extends NewSubCommand {
     System.err.println("      Note to view list of variants type: '" + cmdPrefix + " project <AnyName> <TemplateName>'");
     for (ProjectTemplate pt : templateMap.values()) {
       System.err.println(//"        " +
-        cmdPrefix + " project " + projectName + " " + pt.name);
+          cmdPrefix + " project " + projectName + " " + pt.name);
     }
   }
 
@@ -142,10 +142,10 @@ public class CommandNewProject extends NewSubCommand {
     Path gitPath = prepareTemplate();
 
     Set<String> variantSet = Git.listRemoteBranches(gitPath)
-      .stream()
-      .map(this::extractVariant)
-      .filter(Objects::nonNull)
-      .collect(Collectors.toSet());
+        .stream()
+        .map(this::extractVariant)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toSet());
 
     if (!variantSet.contains(templateVariant)) {
       System.err.println("Unknown variant `" + templateVariant + "'.");
@@ -168,12 +168,12 @@ public class CommandNewProject extends NewSubCommand {
     }
 
     TemplateCopier.of()
-      .from(gitPath)
-      .to(projectDir.toPath())
-      .setVariable("PROJECT_NAME", projectName)
-      .setVariable("PROJECT_CC_NAME", StrUtil.toCamelCase(projectName))
-      .setVariable("RND_SALT", "\"" + StrUtil.generateSalt() + "\"")
-      .copy();
+        .from(gitPath)
+        .to(projectDir.toPath())
+        .setVariable("PROJECT_NAME", projectName)
+        .setVariable("PROJECT_CC_NAME", StrUtil.toCamelCase(projectName))
+        .setVariable("RND_SALT", "\"" + StrUtil.generateSalt() + "\"")
+        .copy();
 
     Git.init(projectDir.toPath());
     Git.addAll(projectDir.toPath());
@@ -181,7 +181,7 @@ public class CommandNewProject extends NewSubCommand {
   }
 
   private static Path templatesDir() {
-    return Locations.localNewProject().resolve("templates");
+    return Locations.localNewProject().resolve("templates-001");
   }
 
   private Path gitRepoPath(String templateName) {
@@ -205,10 +205,10 @@ public class CommandNewProject extends NewSubCommand {
     Path gitPath = prepareTemplate();
 
     Git.listRemoteBranches(gitPath)
-      .stream()
-      .map(this::extractVariant)
-      .filter(Objects::nonNull)
-      .forEachOrdered(variant -> System.err.println(cmd + variant));
+        .stream()
+        .map(this::extractVariant)
+        .filter(Objects::nonNull)
+        .forEachOrdered(variant -> System.err.println(cmd + variant));
 
   }
 

@@ -83,7 +83,7 @@ public class CommandUpdate extends CommandAbstract {
     }
 
     System.err.println("***");
-    System.err.println("*** There is a new version " + remoteVersion + " ***");
+    System.err.println("*** There is a new version " + remoteVersion);
     System.err.println("***");
   }
 }
