@@ -172,7 +172,7 @@ public class CommandNewProject extends NewSubCommand {
         .to(projectDir.toPath())
         .setVariable("PROJECT_NAME", projectName)
         .setVariable("PROJECT_CC_NAME", StrUtil.toCamelCase(projectName))
-        .setVariable("RND_SALT", "\"" + StrUtil.generateSalt() + "\"")
+        .setVariable("RND_SALT", StrUtil.generateSalt())
         .copy();
 
     Git.init(projectDir.toPath());
