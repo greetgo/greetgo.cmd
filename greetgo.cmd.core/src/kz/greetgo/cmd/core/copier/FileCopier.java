@@ -102,16 +102,16 @@ public class FileCopier {
   private List<String> modify(List<String> lines) {
     List<String> ret = new ArrayList<>();
 
-    List<String> modifyList = new ArrayList<>();
+    List<LineModification> modifyList = new ArrayList<>();
 
     int lineNo = 0;
 
     for (String line : lines) {
       lineNo++;
-      if (line.startsWith("///MODIFY ")
-        || line.startsWith("###MODIFY ")
-      ) {
-        modifyList.add(line.substring("###MODIFY ".length()).trim());
+      LineModification lineModification = LineModification.extract(line);
+
+      if (lineModification != null) {
+        modifyList.add(lineModification);
         continue;
       }
 
@@ -122,32 +122,12 @@ public class FileCopier {
     return ret;
   }
 
-  private String modifyLine(String line, List<String> modifyList, int lineNo) {
-    for (String modifyCmd : modifyList) {
-      line = modifyStr(modifyCmd, line, lineNo);
+
+  private String modifyLine(String line, List<LineModification> modifyList, int lineNo) {
+    for (LineModification cmd : modifyList) {
+      line = cmd.modifyStr(line, lineNo, fromFile, this::updateValue);
     }
     return line;
-  }
-
-  private String modifyStr(String modifyCmd, String nextLine, int line) {
-    String[] split = modifyCmd.split("\\s+");
-    if (split.length == 3 && split[0].equals("replace")) {
-      String regexp = split[1];
-      String replacement = updateValue(split[2]);
-
-      Pattern r = Pattern.compile(regexp);
-
-      StringBuffer result = new StringBuffer();
-      Matcher matcher = r.matcher(nextLine);
-      while (matcher.find()) {
-        matcher.appendReplacement(result, replacement);
-      }
-      matcher.appendTail(result);
-
-      return result.toString();
-    }
-
-    throw new RuntimeException("Unknown modify command: `" + modifyCmd + "' at line " + line + " in " + fromFile);
   }
 
   private void writeToDestination(byte[] bytes) throws IOException {
